@@ -12,7 +12,7 @@
                 <a href="#" class="text-white-50 text-decoration-none hover-white">Help</a>
                 <div class="d-flex gap-3 ms-md-3">
                     <a href="#" class="text-white-50 hover-white fs-5"><i class="fab fa-tiktok"></i></a>
-                    <a href="#" class="text-white-50 hover-white fs-5"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-white-50 hover-white fs-5"><i class="fab fa-youtube"></i></a>
                     <a href="#" class="text-white-50 hover-white fs-5"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
