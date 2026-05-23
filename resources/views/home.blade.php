@@ -1,16 +1,38 @@
-@extends('layouts.app', ['title' => 'Sora Jewelry'])
+    @extends('layouts.app', ['title' => 'Sora Jewelry'])
 
-@section('styles')
-<style>
-    .hero {
-        height: 78vh;
+    @section('styles')
+    <style>
+        .hero {
+        position: relative;
+        height: 90vh;
+        overflow: hidden;
+
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
-        background: #f1f1ef;
+
         margin: -24px -38px 60px;
-        padding: 40px;
+    }
+
+    .hero-video {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,0.35);
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        color: white;
+        padding: 20px;
     }
 
     .hero h1 {
@@ -19,94 +41,186 @@
         font-weight: 400;
         font-style: italic;
         margin: 0 0 18px;
+
+        animation: fadeUp 2.5s ease;
     }
 
     .hero p {
         max-width: 520px;
         margin: 0 auto 28px;
-        color: #555;
+        color: white;
+        font-family: Georgia, serif;
+        font-size: 18px;
+        letter-spacing: 1px;
         line-height: 1.7;
-    }
 
-    .hero-btn {
+        animation: fadeUp 2s ease;
+    }
+        .hero-btn {
         display: inline-block;
-        padding: 13px 28px;
-        border: 1px solid #222;
+        padding: 14px 32px;
+
+        border: 1px solid white;
+        border-radius: 40px;
+
         font-size: 14px;
+        letter-spacing: 1px;
+
+        color: white;
+
+        background: transparent;
+
+        transition: 0.35s ease;
+
+        animation: fadeUp 2.5s ease;
     }
 
-    .section-title {
-        font-size: 26px;
-        font-weight: 400;
-        margin-bottom: 25px;
+    .hero-btn:hover {
+        background: #d4b06a;
+
+        color: white;
+
+        transform: translateY(-5px) scale(1.05);
+
+        box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    }
+
+        .section-title {
+            font-size: 26px;
+            font-weight: 400;
+            margin-bottom: 25px;
+        }
+
+        .featured-wrapper {
+    overflow-x: auto;
+
+    scroll-behavior: smooth;
+
+    scrollbar-width: none;
+
+    width: 100%;
+    }
+
+    .featured-wrapper::-webkit-scrollbar {
+        display: none;
     }
 
     .featured-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 18px;
+        display: flex;
+        gap: 20px;
     }
 
-    .product-image-box {
-        background: #efefed;
-        aspect-ratio: 1 / 1.2;
-        overflow: hidden;
+    .featured-grid a {
+        min-width: 250px;
+        flex-shrink: 0;
+
+        transition: 0.3s ease;
     }
 
-    .product-image-box img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+    .featured-grid a:hover {
+        transform: translateY(-8px);
     }
 
-    .product-name {
-        margin-top: 12px;
-    }
+        .product-image-box {
+            background: #efefed;
+            aspect-ratio: 1 / 1.2;
+            overflow: hidden;
+        }
 
-    .product-price {
-        color: #555;
-        margin-top: 4px;
-    }
+        .product-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-    @media (max-width: 900px) {
-        .featured-grid {
-            grid-template-columns: repeat(2, 1fr);
+        .product-name {
+            margin-top: 12px;
+        }
+
+        .product-price {
+            color: #555;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 900px) {
+            .featured-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
     }
-</style>
-@endsection
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
 
-@section('content')
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-<section class="hero">
-    <div>
-        <h1>Sora Jewelry</h1>
-        <p>Minimal jewelry pieces designed for everyday elegance.</p>
-        <a href="{{ route('products.index') }}" class="hero-btn">Shop Catalogue</a>
+    </style>
+    @endsection
+
+    @section('content')
+
+    <section class="hero">
+
+        <video autoplay muted loop playsinline class="hero-video">
+            <source src="{{ asset('videos/jewelry-video.mp4') }}" type="video/mp4">
+        </video>
+
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+            <h1>Sora Jewelry</h1>
+
+            <p>
+                Minimal jewelry pieces designed for everyday elegance.
+            </p>
+
+            <a href="{{ route('products.index') }}" class="hero-btn">
+                Shop Catalogue
+            </a>
+        </div>
+
+    </section>
+
+    <h2 class="section-title">Featured Products</h2>
+
+    <div class="featured-wrapper">
+    <div class="featured-grid">
+
+        @foreach($featuredProducts->concat($featuredProducts) as $product)
+            @php
+                $mainImage = $product->images->where('is_main', 1)->first() ?? $product->images->first();
+            @endphp
+
+            <a href="{{ route('products.show', $product->slug) }}">
+                <div class="product-image-box">
+                    @if($mainImage)
+                        <img src="{{ asset('storage/' . $mainImage->image_path) }}" alt="{{ $product->name }}">
+                    @else
+                        <img src="{{ asset('storage/products/default-jewelry.jpg') }}" alt="{{ $product->name }}">
+                    @endif
+                </div>
+
+                <div class="product-name">{{ $product->name }}</div>
+                <div class="product-price">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
+            </a>
+        @endforeach
     </div>
-</section>
+    </div>
 
-<h2 class="section-title">Featured Products</h2>
-
-<div class="featured-grid">
-    @foreach($featuredProducts as $product)
-        @php
-            $mainImage = $product->images->where('is_main', 1)->first() ?? $product->images->first();
-        @endphp
-
-        <a href="{{ route('products.show', $product->slug) }}">
-            <div class="product-image-box">
-                @if($mainImage)
-                    <img src="{{ asset('storage/' . $mainImage->image_path) }}" alt="{{ $product->name }}">
-                @else
-                    <img src="{{ asset('storage/products/default-jewelry.jpg') }}" alt="{{ $product->name }}">
-                @endif
-            </div>
-
-            <div class="product-name">{{ $product->name }}</div>
-            <div class="product-price">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
-        </a>
-    @endforeach
-</div>
-
-@endsection
+    @endsection

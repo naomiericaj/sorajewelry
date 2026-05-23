@@ -12,7 +12,7 @@
 
         body {
             margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: "Cormorant Garamond", serif;
             background: #f8f8f6;
             color: #222;
             font-size: 15px;
@@ -28,16 +28,17 @@
         }
 
         .navbar {
-            height: 70px;
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            padding: 0 38px;
-            background: #f8f8f6;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        height: 70px;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        padding: 0 38px;
+        background: #f8f8f6;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        overflow: visible;
+    }
 
         .nav-left {
             display: flex;
@@ -46,18 +47,68 @@
         }
 
         .nav-left a {
-            font-size: 15px;
-            color: #333;
-        }
+        font-size: 18px;
+        color: #333;
+
+        position: relative;
+
+        transition: 0.3s ease;
+    }
+        .nav-left a:hover {
+        color: #b89b5e;
+
+        transform: scale(1.08);
+    }
+    .nav-right a {
+    position: relative;
+    font-size: 18px;
+    transition: 0.3s ease;
+    }
+
+    .nav-right a:hover {
+        color: #b89b5e;
+        transform: scale(1.08);
+    }
+
+    .nav-right a::after {
+        content: '';
+
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+
+        width: 0%;
+        height: 1px;
+
+        background: #b89b5e;
+
+        transition: 0.3s ease;
+    }
+
+    .nav-right a:hover::after {
+        width: 100%;
+    }
 
         .logo {
-            font-family: Georgia, serif;
-            font-style: italic;
-            font-size: 34px;
-            letter-spacing: 2px;
-            font-weight: 400;
-        }
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
+    .logo img {
+        height: 110px;
+        width: auto;
+        object-fit: contain;
+
+        position: relative;
+        top: 8px;
+
+        transition: 0.3s ease;
+    }
+
+    .logo img:hover {
+        transform: scale(1.05);
+    }
         .nav-right {
             display: flex;
             justify-content: flex-end;
@@ -65,20 +116,91 @@
             gap: 18px;
         }
 
-        .nav-button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #333;
-            font-size: 15px;
-            padding: 0;
-        }
+    .nav-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #333;
+        font-size: 18px;
+        padding: 0;
 
-        .icon {
+        position: relative;
+
+        transition: 0.3s ease;
+    }
+
+    .nav-button:hover {
+        color: #b89b5e;
+        transform: scale(1.08);
+    }
+
+    .nav-button::after {
+        content: '';
+
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+
+        width: 0%;
+        height: 1px;
+
+        background: #b89b5e;
+
+        transition: 0.3s ease;
+    }
+
+    .nav-button:hover::after {
+        width: 100%;
+    }
+
+    .icon {
             font-size: 18px;
             position: relative;
         }
+        .search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    }
 
+    .search-toggle {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+
+        transition: 0.3s ease;
+    }
+
+    .search-toggle:hover {
+        color: #b89b5e;
+        transform: scale(1.1);
+    }
+
+        .search-bar {
+        width: 0;
+        opacity: 0;
+
+        padding: 8px 12px;
+
+        border: 1px solid #ccc;
+        border-radius: 30px;
+
+        outline: none;
+
+        transition: 0.4s ease;
+
+        margin-left: 10px;
+    }
+
+    .search-bar.active {
+        width: 180px;
+        opacity: 1;
+    }
+    .search-container:hover .search-bar {
+        width: 180px;
+        opacity: 1;
+    }
         .cart-count {
             position: absolute;
             top: -10px;
@@ -141,7 +263,9 @@
         <a href="#">Contact</a>
     </nav>
 
-    <a href="{{ route('home') }}" class="logo">Sora</a>
+    <a href="{{ route('home') }}" class="logo">
+    <img src="{{ asset('images/sora-logo (1).png') }}" alt="Sora Logo">
+</a>
 
     <div class="nav-right">
         @auth
@@ -160,7 +284,18 @@
             <a href="{{ route('register') }}">Register</a>
         @endauth
 
-        <a href="#" class="icon">⌕</a>
+            <div class="search-container">
+
+        <button class="search-toggle" onclick="toggleSearch()">
+            ⌕
+        </button>
+
+        <input type="text"
+            placeholder="Search jewelry..."
+            class="search-bar"
+            id="searchBar">
+
+    </div>
         <a href="#" class="icon">♡</a>
         <a href="#" class="icon">
             🛍

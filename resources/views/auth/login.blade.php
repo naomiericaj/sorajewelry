@@ -43,6 +43,19 @@
         color: #555;
         line-height: 1.8;
     }
+    .auth-link {
+        color: #4a7dff;
+
+        text-decoration: underline;
+
+        transition: 0.3s ease;
+    }
+
+    .auth-link:hover {
+        color: #2f5fe3;
+
+        letter-spacing: 1px;
+    }
 
     .error {
         background: #f8d7da;
@@ -77,8 +90,18 @@
     </form>
 
     <div class="auth-links">
-        <div>Do not have an account? <a href="{{ route('register') }}">Register here</a></div>
-        <div>Admin? <a href="{{ route('admin.login') }}">Admin login</a></div>
+    <div>
+        Do not have an account?
+        <a href="{{ route('register') }}" class="auth-link">
+            Register here
+        </a>
+    </div>
+
+    <div>
+        Admin?
+        <a href="{{ route('admin.login') }}" class="auth-link">
+            Admin login
+        </a>
     </div>
 </div>
 
