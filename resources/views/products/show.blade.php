@@ -175,16 +175,18 @@
 
 <section class="product-page">
     <div class="product-gallery">
-        @forelse($product->images as $image)
+    @if($product->images->isNotEmpty())
+        @foreach($product->images as $image)
             <div class="product-image-box">
                 <img src="{{ asset('storage/' . $image->image_path) }}" alt="{{ $product->name }}">
             </div>
-        @empty
-            <div class="product-image-box">
-                <img src="{{ asset('storage/products/default-jewelry.jpg') }}" alt="{{ $product->name }}">
-            </div>
-        @endforelse
-    </div>
+        @endforeach
+    @else
+        <div class="product-image-box">
+            <div style="color:#999;">No Image</div>
+        </div>
+    @endif
+</div>
 
     <aside class="product-info">
         <h1 class="product-title">{{ $product->name }}</h1>

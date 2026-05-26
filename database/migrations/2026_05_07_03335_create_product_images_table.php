@@ -12,16 +12,12 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('product_id')
-                ->constrained('products')
-                ->onDelete('cascade');
+                ->constrained()
+                ->cascadeOnDelete();
 
-            // Original image
             $table->string('image_path');
-
-            // Processed/compressed/resized image
             $table->string('processed_image_path')->nullable();
 
-            // Main image shown in product card
             $table->boolean('is_main')->default(false);
 
             $table->timestamps();

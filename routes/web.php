@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\ContactController;
 
 
+
 Route::middleware('auth')->group(function () {
     // Wishlist
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
@@ -110,6 +111,15 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 
 Route::patch('/products/{product}', [AdminProductController::class, 'update'])
     ->name('products.update');
+
+    Route::delete('/products/images/{image}', [AdminProductController::class, 'deleteImage'])
+    ->name('products.images.delete');
+
+Route::patch('/products/images/{image}/main', [AdminProductController::class, 'setMainImage'])
+    ->name('products.images.main');
+
+    Route::post('/products/{product}/images', [AdminProductController::class, 'storeImages'])
+    ->name('products.images.store');
 
         
 });

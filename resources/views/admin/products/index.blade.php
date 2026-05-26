@@ -101,11 +101,17 @@
         @foreach($products as $product)
             <tr>
                 <td>
-                    @if($product->mainImage)
-                        <img src="{{ asset('storage/' . $product->mainImage->image_path) }}" class="thumb">
-                    @else
-                        <img src="{{ asset('storage/products/default-jewelry.jpg') }}" class="thumb">
-                    @endif
+                    @php
+    $image = $product->images->where('is_main', 1)->first() ?? $product->images->first();
+@endphp
+
+@if($image)
+    <img src="{{ asset('storage/' . $image->image_path) }}" alt="{{ $product->name }}">
+@else
+    <div style="width:80px;height:80px;background:#eee;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;">
+        No Image
+    </div>
+@endif
                 </td>
                 <td>{{ $product->name }}</td>
                 <td>{{ $product->category->name ?? '-' }}</td>

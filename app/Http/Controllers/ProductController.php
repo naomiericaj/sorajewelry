@@ -55,6 +55,11 @@ class ProductController extends Controller
 
         $products = $query->paginate(20)->withQueryString();
 
+        $products = Product::with(['category', 'collection', 'images'])
+        ->where('status', 'active')
+        ->latest()
+        ->paginate(20);
+
         return view('products.index', compact('products', 'categories'));
     }
 

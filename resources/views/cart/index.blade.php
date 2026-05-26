@@ -6,6 +6,7 @@
         display: grid;
         grid-template-columns: 1fr 430px;
         min-height: calc(100vh - 70px);
+        background: #f8f8f6;
     }
 
     .cart-left {
@@ -13,7 +14,8 @@
     }
 
     .cart-title {
-        font-size: 32px;
+        font-family: Georgia, serif;
+        font-size: 38px;
         font-weight: 400;
         margin-bottom: 30px;
     }
@@ -27,12 +29,21 @@
         align-items: start;
     }
 
-    .cart-img {
+    .cart-img,
+    .cart-no-image {
         width: 115px;
         height: 130px;
         object-fit: cover;
-        background: #eee;
+        background: #efefed;
         border: 1px solid #eee;
+    }
+
+    .cart-no-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        font-size: 12px;
     }
 
     .cart-name {
@@ -78,6 +89,14 @@
         margin-top: 12px;
         padding: 0;
         font-size: 13px;
+        text-decoration: underline;
+    }
+
+    .saving {
+        font-size: 12px;
+        color: #777;
+        margin-top: 8px;
+        display: none;
     }
 
     .cart-summary {
@@ -92,7 +111,8 @@
     }
 
     .summary-title {
-        font-size: 28px;
+        font-family: Georgia, serif;
+        font-size: 30px;
         font-weight: 400;
         margin-bottom: 30px;
     }
@@ -125,17 +145,17 @@
         cursor: pointer;
     }
 
-    .empty-cart {
-        background: white;
-        padding: 35px;
-        color: #666;
+    .continue-link {
+        display: inline-block;
+        margin-top: 20px;
+        text-decoration: underline;
+        font-size: 14px;
     }
 
-    .saving {
-        font-size: 12px;
-        color: #777;
-        margin-top: 8px;
-        display: none;
+    .empty-cart {
+        background: white;
+        padding: 40px;
+        color: #666;
     }
 
     @media (max-width: 900px) {
@@ -150,6 +170,12 @@
 
         .cart-item {
             grid-template-columns: 95px 1fr;
+        }
+
+        .cart-img,
+        .cart-no-image {
+            width: 95px;
+            height: 110px;
         }
 
         .cart-actions {
@@ -169,13 +195,15 @@
 
         @if($cartItems->isEmpty())
             <div class="empty-cart">
-                Your cart is empty.
+                Your cart is empty.<br><br>
+                <a href="{{ route('products.index') }}" style="text-decoration:underline;">Continue shopping</a>
             </div>
         @else
             @foreach($cartItems as $item)
                 @php
                     $product = $item->product;
                     $image = $product->images->where('is_main', 1)->first() ?? $product->images->first();
+
                     $price = $product->discount_price ?? $product->price;
                     $variantPrice = $item->variant->additional_price ?? 0;
                     $finalPrice = $price + $variantPrice;
@@ -185,17 +213,21 @@
                      data-item-id="{{ $item->id }}"
                      data-price="{{ $finalPrice }}">
 
-                    @if($image)
-                        <img src="{{ asset('storage/' . $image->image_path) }}" class="cart-img" alt="{{ $product->name }}">
-                    @else
-                        <img src="{{ asset('storage/products/default-jewelry.jpg') }}" class="cart-img" alt="{{ $product->name }}">
-                    @endif
+                    <a href="{{ route('products.show', $product->slug) }}">
+                        @if($image)
+                            <img src="{{ asset('storage/' . $image->image_path) }}" class="cart-img" alt="{{ $product->name }}">
+                        @else
+                            <div class="cart-no-image">No Image</div>
+                        @endif
+                    </a>
 
                     <div>
-                        <div class="cart-name">{{ $product->name }}</div>
+                        <a href="{{ route('products.show', $product->slug) }}">
+                            <div class="cart-name">{{ $product->name }}</div>
+                        </a>
 
                         <div class="cart-meta">
-                            {{ $product->color ?? 'Silver' }}
+                            {{ $product->color ?? 'No color selected' }}
                             @if($item->variant)
                                 / {{ $item->variant->variant_name ?? $item->variant->size }}
                             @endif
@@ -227,6 +259,8 @@
                     </div>
                 </div>
             @endforeach
+
+            <a href="{{ route('products.index') }}" class="continue-link">Continue shopping</a>
         @endif
     </div>
 

@@ -1,131 +1,156 @@
-@extends('layouts.app', ['title' => 'Products - Sora Jewelry'])
+@extends('layouts.app', ['title' => 'Catalogue - Sora Jewelry'])
 
 @section('styles')
 <style>
+    .catalogue-page {
+        padding: 42px 38px 80px;
+        background: #f8f8f6;
+        min-height: calc(100vh - 70px);
+    }
+
     .catalogue-header {
-        margin-bottom: 55px;
+        margin-bottom: 36px;
     }
 
     .catalogue-title {
-        font-size: 27px;
+        font-family: Georgia, serif;
+        font-size: 42px;
         font-weight: 400;
-        margin-bottom: 55px;
+        margin: 0;
     }
 
-    .catalogue-toolbar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .filters {
-        display: flex;
-        gap: 28px;
-        align-items: center;
-    }
-
-    .filter-select {
-        border: none;
-        background: transparent;
+    .catalogue-subtitle {
+        color: #666;
+        margin-top: 8px;
         font-size: 15px;
-        color: #333;
-        padding: 5px 0;
-        cursor: pointer;
     }
 
-    .toolbar-right {
-        display: flex;
-        align-items: center;
-        gap: 25px;
-        color: #555;
+    .product-count {
+        margin-top: 18px;
+        color: #777;
+        font-size: 14px;
     }
 
-    .view-icons {
-        display: flex;
-        gap: 14px;
-        font-size: 20px;
-    }
-
-    .products-grid {
+    .product-grid {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 18px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 22px;
     }
 
-    .product-image-box {
+    .product-card {
+        display: block;
+        color: inherit;
+        text-decoration: none;
+        position: relative;
+        z-index: 1;
+    }
+
+    .product-image-wrap {
         width: 100%;
-        aspect-ratio: 1 / 1.22;
+        aspect-ratio: 1 / 1.25;
         background: #efefed;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         overflow: hidden;
+        position: relative;
     }
 
-    .product-image-box img {
+    .product-image-wrap img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.35s ease;
+        display: block;
     }
 
-    .product-card:hover img {
-        transform: scale(1.04);
+    .no-image-box {
+        width: 100%;
+        height: 100%;
+        background: #efefed;
+        color: #999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+
+    .featured-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: #111;
+        color: white;
+        font-size: 12px;
+        padding: 7px 10px;
+        z-index: 2;
     }
 
     .product-info {
-        padding-top: 12px;
-        line-height: 1.35;
+        padding-top: 13px;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: flex-start;
     }
 
     .product-name {
         font-size: 15px;
-        color: #333;
+        line-height: 1.5;
     }
 
     .product-price {
-        font-size: 15px;
+        font-size: 14px;
         color: #555;
+        white-space: nowrap;
+        text-align: right;
     }
 
-    .empty {
-        grid-column: 1 / -1;
-        padding: 80px 0;
-        text-align: center;
-        color: #777;
+    .discount-price {
+        color: #111;
     }
 
-    .pagination {
+    .old-price {
+        display: block;
+        color: #999;
+        text-decoration: line-through;
+        font-size: 13px;
+        margin-top: 3px;
+    }
+
+    .empty-box {
+        background: white;
+        padding: 40px;
+        color: #666;
+    }
+
+    .pagination-box {
         margin-top: 40px;
     }
 
-    @media (max-width: 1200px) {
-        .products-grid {
-            grid-template-columns: repeat(4, 1fr);
+    @media (max-width: 1100px) {
+        .product-grid {
+            grid-template-columns: repeat(3, 1fr);
         }
     }
 
-    @media (max-width: 900px) {
-        .products-grid {
+    @media (max-width: 750px) {
+        .catalogue-page {
+            padding: 30px 18px 60px;
+        }
+
+        .catalogue-title {
+            font-size: 34px;
+        }
+
+        .product-grid {
             grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
         }
 
-        .catalogue-toolbar {
-            align-items: flex-start;
-            gap: 20px;
-            flex-direction: column;
-        }
-    }
-
-    @media (max-width: 500px) {
-        .products-grid {
-            grid-template-columns: 1fr;
+        .product-info {
+            display: block;
         }
 
-        .filters {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
+        .product-price {
+            text-align: left;
+            margin-top: 5px;
         }
     }
 </style>
@@ -133,85 +158,73 @@
 
 @section('content')
 
-<div class="catalogue-header">
-    <h1 class="catalogue-title">Products</h1>
+<section class="catalogue-page">
+    <div class="catalogue-header">
+        <h1 class="catalogue-title">Catalogue</h1>
+        <div class="catalogue-subtitle">Minimal jewelry pieces for everyday styling.</div>
 
-    <form method="GET" action="{{ route('products.index') }}" class="catalogue-toolbar">
-        <div class="filters">
-            <select name="category" class="filter-select" onchange="this.form.submit()">
-                <option value="">Product type</option>
-                @foreach($categories as $category)
-                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                        {{ $category->name }}
-                    </option>
-                @endforeach
-            </select>
+        <div class="product-count">
+            @if(method_exists($products, 'total'))
+                {{ $products->total() }} items
+            @else
+                {{ $products->count() }} items
+            @endif
+        </div>
+    </div>
 
-            <select name="availability" class="filter-select" onchange="this.form.submit()">
-                <option value="">Availability</option>
-                <option value="in_stock" {{ request('availability') == 'in_stock' ? 'selected' : '' }}>In stock</option>
-                <option value="out_of_stock" {{ request('availability') == 'out_of_stock' ? 'selected' : '' }}>Out of stock</option>
-            </select>
+    @if($products->isEmpty())
+        <div class="empty-box">
+            No products available yet.
+        </div>
+    @else
+        <div class="product-grid">
+            @foreach($products as $product)
+                @php
+                    $image = $product->images->where('is_main', 1)->first() ?? $product->images->first();
+                    $price = $product->discount_price ?? $product->price;
+                @endphp
 
-            <select name="price" class="filter-select" onchange="this.form.submit()">
-                <option value="">Price</option>
-                <option value="low_high" {{ request('price') == 'low_high' ? 'selected' : '' }}>Low to high</option>
-                <option value="high_low" {{ request('price') == 'high_low' ? 'selected' : '' }}>High to low</option>
-            </select>
+                <a href="{{ route('products.show', $product->slug) }}" class="product-card">
+                    <div class="product-image-wrap">
+                        @if($product->is_featured)
+                            <span class="featured-badge">Featured</span>
+                        @endif
+
+                        @if($image)
+                            <img src="{{ asset('storage/' . $image->image_path) }}" alt="{{ $product->name }}">
+                        @else
+                            <div class="no-image-box">No Image</div>
+                        @endif
+                    </div>
+
+                    <div class="product-info">
+                        <div class="product-name">
+                            {{ $product->name }}
+                        </div>
+
+                        <div class="product-price">
+                            @if($product->discount_price)
+                                <span class="discount-price">
+                                    Rp {{ number_format($product->discount_price, 0, ',', '.') }}
+                                </span>
+                                <span class="old-price">
+                                    Rp {{ number_format($product->price, 0, ',', '.') }}
+                                </span>
+                            @else
+                                Rp {{ number_format($product->price, 0, ',', '.') }}
+                            @endif
+                        </div>
+                    </div>
+                </a>
+            @endforeach
         </div>
 
-        <div class="toolbar-right">
-            <span>{{ $products->total() }} items</span>
-
-            <select name="sort" class="filter-select" onchange="this.form.submit()">
-                <option value="">Sort</option>
-                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Latest</option>
-                <option value="popular" {{ request('sort') == 'popular' ? 'selected' : '' }}>Popular</option>
-                <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>Name</option>
-            </select>
-
-            <div class="view-icons">
-                <span>▦</span>
-                <span>☷</span>
+        @if(method_exists($products, 'links'))
+            <div class="pagination-box">
+                {{ $products->links() }}
             </div>
-        </div>
-    </form>
-</div>
-
-<div class="products-grid">
-    @forelse($products as $product)
-        @php
-            $mainImage = $product->images->where('is_main', 1)->first() ?? $product->images->first();
-        @endphp
-
-        <a href="{{ route('products.show', $product->slug) }}" class="product-card">
-            <div class="product-image-box">
-                @if($mainImage)
-                    <img src="{{ asset('storage/' . $mainImage->image_path) }}" alt="{{ $product->name }}">
-                @else
-                    <img src="{{ asset('storage/products/default-jewelry.jpg') }}" alt="{{ $product->name }}">
-                @endif
-            </div>
-
-            <div class="product-info">
-                <div class="product-name">{{ $product->name }}</div>
-
-                <div class="product-price">
-                    @if($product->discount_price)
-                        Rp {{ number_format($product->discount_price, 0, ',', '.') }}
-                    @else
-                        Rp {{ number_format($product->price, 0, ',', '.') }}
-                    @endif
-                </div>
-            </div>
-        </a>
-    @empty
-        <div class="empty">No products found.</div>
-    @endforelse
-</div>
-
-<div class="pagination">
-    {{ $products->links() }}
-</div>
+        @endif
+    @endif
+</section>
 
 @endsection

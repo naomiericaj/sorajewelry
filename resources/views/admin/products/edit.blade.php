@@ -33,7 +33,7 @@
 
     .form-grid {
         display: grid;
-        grid-template-columns: 1fr 420px;
+        grid-template-columns: 1fr 460px;
         gap: 28px;
         align-items: start;
     }
@@ -92,34 +92,6 @@
         width: auto;
     }
 
-    .image-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-    }
-
-    .image-card {
-        background: #f1f1ee;
-        border: 1px solid #e1e1dd;
-        padding: 10px;
-    }
-
-    .image-card img {
-        width: 100%;
-        height: 160px;
-        object-fit: cover;
-        display: block;
-    }
-
-    .main-badge {
-        display: inline-block;
-        margin-top: 8px;
-        padding: 5px 9px;
-        background: black;
-        color: white;
-        font-size: 12px;
-    }
-
     .submit-btn {
         width: 100%;
         height: 58px;
@@ -131,6 +103,17 @@
         margin-top: 10px;
     }
 
+    .upload-btn {
+        width: 100%;
+        height: 54px;
+        background: #111;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 15px;
+        margin-top: 14px;
+    }
+
     .note {
         color: #666;
         font-size: 13px;
@@ -138,7 +121,84 @@
         margin-top: 10px;
     }
 
-    @media (max-width: 950px) {
+    .image-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    .image-card {
+        background: #f1f1ee;
+        border: 1px solid #e1e1dd;
+        padding: 10px;
+    }
+
+    .image-card img {
+        width: 100%;
+        height: 170px;
+        object-fit: cover;
+        display: block;
+        background: #eee;
+    }
+
+    .main-badge {
+        display: block;
+        text-align: center;
+        margin-top: 10px;
+        padding: 8px 10px;
+        background: #111;
+        color: white;
+        font-size: 12px;
+    }
+
+    .image-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .small-btn {
+        width: 100%;
+        height: 38px;
+        border: 1px solid #111;
+        background: transparent;
+        color: #111;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+    .danger-btn {
+        border-color: #8b0000;
+        color: #8b0000;
+    }
+
+    .danger-btn:hover {
+        background: #8b0000;
+        color: white;
+    }
+
+    .main-preview {
+        background: #f1f1ee;
+        padding: 12px;
+        margin-bottom: 18px;
+    }
+
+    .main-preview img {
+        width: 100%;
+        height: 260px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .main-preview-label {
+        margin-top: 10px;
+        font-size: 13px;
+        color: #555;
+        text-align: center;
+    }
+
+    @media (max-width: 1000px) {
         .form-grid {
             grid-template-columns: 1fr;
         }
@@ -156,18 +216,20 @@
     <div class="page-header">
         <div>
             <h1 class="title">Edit Product</h1>
-            <div class="subtitle">Update product details, price, stock, status, and images.</div>
+            <div class="subtitle">
+                Update product details, upload images, delete images, and choose the main image.
+            </div>
         </div>
 
         <a href="{{ route('admin.products.index') }}" class="back-link">Back to products</a>
     </div>
 
-    <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data">
-        @csrf
-        @method('PATCH')
+    <div class="form-grid">
+        <div>
+            <form action="{{ route('admin.products.update', $product) }}" method="POST">
+                @csrf
+                @method('PATCH')
 
-        <div class="form-grid">
-            <div>
                 <div class="box">
                     <h2 class="box-title">Product Information</h2>
 
@@ -257,52 +319,106 @@
                 </div>
 
                 <div class="box">
-                    <h2 class="box-title">Add New Images</h2>
+                    <h2 class="box-title">Save Product Details</h2>
 
-                    <div class="form-group">
-                        <label>Upload additional product images</label>
-                        <input type="file" name="images[]" multiple accept="image/*">
-                        <div class="note">
-                            Existing images will remain saved. New images will be added to this product.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <aside>
-                <div class="box">
-                    <h2 class="box-title">Current Images</h2>
-
-                    @if($product->images->isEmpty())
-                        <p class="note">No images uploaded yet.</p>
-                    @else
-                        <div class="image-grid">
-                            @foreach($product->images as $image)
-                                <div class="image-card">
-                                    <img src="{{ asset('storage/' . $image->image_path) }}" alt="{{ $product->name }}">
-
-                                    @if($image->is_main)
-                                        <span class="main-badge">Main Image</span>
-                                    @endif
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
-
-                <div class="box">
-                    <h2 class="box-title">Save Changes</h2>
                     <p class="note">
-                        Click save to update the product. The catalogue and product detail page will use the newest product data.
+                        This saves product name, category, price, stock, status, and description.
+                        Product images are managed separately on the right.
                     </p>
 
                     <button type="submit" class="submit-btn">
-                        Save Product Changes
+                        Save Product Details
                     </button>
                 </div>
-            </aside>
+            </form>
         </div>
-    </form>
+
+        <aside>
+            <div class="box">
+                <h2 class="box-title">Upload Product Images</h2>
+
+                <form action="{{ route('admin.products.images.store', $product) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+
+                    <div class="form-group">
+                        <label>Select Images</label>
+                        <input type="file" name="images[]" multiple accept="image/*" required>
+
+                        <div class="note">
+                            You can upload as many product images as you want. If this product has no images yet, the first uploaded image will become the main image automatically.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="upload-btn">
+                        Add Images
+                    </button>
+                </form>
+            </div>
+
+            <div class="box">
+                <h2 class="box-title">Main Image Preview</h2>
+
+                @php
+                    $mainImage = $product->images->where('is_main', 1)->first();
+                @endphp
+
+                @if($mainImage)
+                    <div class="main-preview">
+                        <img src="{{ asset('storage/' . $mainImage->image_path) }}" alt="{{ $product->name }}">
+                        <div class="main-preview-label">Currently selected main image</div>
+                    </div>
+                @else
+                    <p class="note">
+                        No main image selected yet. Upload images first, then choose one as the main image.
+                    </p>
+                @endif
+            </div>
+
+            <div class="box">
+                <h2 class="box-title">All Product Images</h2>
+
+                @if($product->images->isEmpty())
+                    <p class="note">
+                        No images uploaded yet. Use the upload box above to add product images.
+                    </p>
+                @else
+                    <div class="image-grid">
+                        @foreach($product->images as $image)
+                            <div class="image-card">
+                                <img src="{{ asset('storage/' . $image->image_path) }}" alt="{{ $product->name }}">
+
+                                @if($image->is_main)
+                                    <span class="main-badge">Main Image</span>
+                                @else
+                                    <div class="image-actions">
+                                        <form action="{{ route('admin.products.images.main', $image) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+
+                                            <button type="submit" class="small-btn">
+                                                Make Main Image
+                                            </button>
+                                        </form>
+                                    </div>
+                                @endif
+
+                                <div class="image-actions">
+                                    <form action="{{ route('admin.products.images.delete', $image) }}" method="POST" onsubmit="return confirm('Delete this image?')">
+                                        @csrf
+                                        @method('DELETE')
+
+                                        <button type="submit" class="small-btn danger-btn">
+                                            Delete Image
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </aside>
+    </div>
 </section>
 
 @endsection
