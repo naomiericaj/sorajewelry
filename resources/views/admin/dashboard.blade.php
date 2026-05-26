@@ -1,4 +1,4 @@
-@extends('layouts.app', ['title' => 'Admin Dashboard - Sora Jewelry'])
+{{-- @extends('layouts.app', ['title' => 'Admin Dashboard - Sora Jewelry'])
 
 @section('styles')
 <style>
@@ -106,4 +106,37 @@
     </div>
 </div>
 
+@endsection --}}
+
+@extends('layouts.app', ['title' => 'Admin Dashboard - Sora Jewelry'])
+
+@section('content')
+<h1>Admin Dashboard</h1>
+
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;">
+    <div style="background:white;padding:25px;">
+        <h2>{{ $totalProducts }}</h2>
+        <p>Products</p>
+    </div>
+
+    <div style="background:white;padding:25px;">
+        <h2>{{ $totalCustomers }}</h2>
+        <p>Customers</p>
+    </div>
+
+    <div style="background:white;padding:25px;">
+        <h2>{{ $totalOrders }}</h2>
+        <p>Total Orders</p>
+    </div>
+
+    <div style="background:white;padding:25px;">
+        <h2>{{ $pendingOrders }}</h2>
+        <p>Pending Orders</p>
+    </div>
+</div>
+
+<div style="margin-top:30px;">
+    <a href="{{ route('admin.products.index') }}">Manage Products</a> |
+    <a href="{{ route('admin.orders.index') }}">Manage Orders</a>
+</div>
 @endsection

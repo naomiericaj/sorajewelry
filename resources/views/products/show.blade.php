@@ -2,122 +2,170 @@
 
 @section('styles')
 <style>
-    .product-detail {
+    .product-page {
         display: grid;
-        grid-template-columns: 1.2fr 0.8fr;
-        gap: 55px;
-        align-items: flex-start;
+        grid-template-columns: 64% 36%;
+        min-height: calc(100vh - 70px);
     }
 
-    .image-grid {
+    .product-gallery {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 18px;
+        gap: 1px;
+        background: #fff;
     }
 
-    .image-box {
-        background: #efefed;
-        aspect-ratio: 1 / 1.18;
+    .product-image-box {
+        background: #f0f0ee;
+        min-height: 620px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         overflow: hidden;
     }
 
-    .image-box img {
+    .product-image-box img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
 
-    .product-summary {
+    .product-info {
+        padding: 30px 44px;
         position: sticky;
-        top: 100px;
-        padding-top: 20px;
+        top: 70px;
+        height: calc(100vh - 70px);
+        overflow-y: auto;
+        background: #f8f8f6;
     }
 
     .product-title {
-        font-size: 28px;
+        font-family: Georgia, serif;
+        font-size: 34px;
         font-weight: 400;
-        margin: 0 0 12px;
+        margin: 0 0 14px;
+        letter-spacing: .3px;
     }
 
     .product-price {
-        font-size: 18px;
-        color: #555;
+        font-size: 17px;
         margin-bottom: 30px;
     }
 
-    .product-description {
-        color: #555;
-        line-height: 1.8;
-        margin-bottom: 30px;
+    .divider {
+        border-top: 1px solid #e1e1dd;
+        margin: 24px 0;
     }
 
-    .meta {
-        margin-bottom: 30px;
-        color: #666;
-        line-height: 1.8;
+    .field-label {
+        display: block;
+        margin-bottom: 10px;
+        color: #333;
     }
 
-    .quantity {
-        margin-bottom: 18px;
-    }
-
-    .quantity input,
-    .variant-select {
+    .select-box {
         width: 100%;
-        padding: 12px;
-        border: 1px solid #ccc;
+        height: 58px;
+        border: 1px solid #ddd;
         background: transparent;
-        margin-top: 8px;
+        padding: 0 18px;
+        font-size: 15px;
+        margin-bottom: 22px;
     }
 
-    .btn {
-        width: 100%;
-        border: 1px solid #222;
-        padding: 15px;
-        margin-bottom: 12px;
+    .cart-row {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 12px;
+        margin-bottom: 22px;
+    }
+
+    .quantity-box {
+        height: 58px;
+        border: 1px solid #ddd;
+        display: grid;
+        grid-template-columns: 40px 1fr 40px;
+        align-items: center;
+        text-align: center;
+    }
+
+    .quantity-box button {
+        border: none;
         background: transparent;
+        font-size: 20px;
         cursor: pointer;
+    }
+
+    .quantity-box input {
+        border: none;
+        background: transparent;
+        text-align: center;
+        width: 100%;
         font-size: 15px;
     }
 
+    .btn {
+        height: 58px;
+        border: 1px solid #111;
+        background: transparent;
+        cursor: pointer;
+        font-size: 15px;
+        width: 100%;
+    }
+
     .btn-dark {
-        background: #222;
+        background: #111;
         color: white;
     }
 
-    .back-link {
-        display: inline-block;
-        margin-bottom: 30px;
+    .wishlist-form {
+        margin-top: 12px;
+    }
+
+    .accordion {
+        border-top: 1px solid #e1e1dd;
+    }
+
+    .accordion-item {
+        border-bottom: 1px solid #e1e1dd;
+        padding: 18px 0;
+    }
+
+    .accordion-title {
+        display: flex;
+        justify-content: space-between;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .accordion-content {
+        margin-top: 14px;
         color: #555;
+        line-height: 1.7;
+        font-size: 14px;
     }
 
-    .recommended-section {
-        margin-top: 80px;
-    }
-
-    .recommended-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 18px;
-    }
-
-    .recommended-title {
-        font-size: 24px;
-        font-weight: 400;
-        margin-bottom: 25px;
-    }
-
-    @media (max-width: 900px) {
-        .product-detail {
+    @media (max-width: 950px) {
+        .product-page {
             grid-template-columns: 1fr;
         }
 
-        .product-summary {
-            position: static;
+        .product-gallery {
+            grid-template-columns: 1fr;
         }
 
-        .recommended-grid {
-            grid-template-columns: repeat(2, 1fr);
+        .product-image-box {
+            min-height: 430px;
+        }
+
+        .product-info {
+            position: static;
+            height: auto;
+            padding: 28px 22px;
+        }
+
+        .cart-row {
+            grid-template-columns: 1fr;
         }
     }
 </style>
@@ -125,22 +173,20 @@
 
 @section('content')
 
-<a href="{{ route('products.index') }}" class="back-link">← Back to products</a>
-
-<div class="product-detail">
-    <div class="image-grid">
+<section class="product-page">
+    <div class="product-gallery">
         @forelse($product->images as $image)
-            <div class="image-box">
+            <div class="product-image-box">
                 <img src="{{ asset('storage/' . $image->image_path) }}" alt="{{ $product->name }}">
             </div>
         @empty
-            <div class="image-box">
+            <div class="product-image-box">
                 <img src="{{ asset('storage/products/default-jewelry.jpg') }}" alt="{{ $product->name }}">
             </div>
         @endforelse
     </div>
 
-    <div class="product-summary">
+    <aside class="product-info">
         <h1 class="product-title">{{ $product->name }}</h1>
 
         <div class="product-price">
@@ -151,68 +197,93 @@
             @endif
         </div>
 
-        <div class="product-description">
-            {{ $product->description }}
-        </div>
+        <div class="divider"></div>
 
-        <div class="meta">
-            <div>Category: {{ $product->category->name ?? '-' }}</div>
-            <div>Collection: {{ $product->collection->name ?? '-' }}</div>
-            <div>Material: {{ $product->material ?? '-' }}</div>
-            <div>Color: {{ $product->color ?? '-' }}</div>
-            <div>Stock: {{ $product->stock }}</div>
-        </div>
-
-        <form action="#" method="POST">
+        <form action="{{ route('cart.store', $product) }}" method="POST">
             @csrf
 
-            @if($product->variants->count() > 0)
-                <label>Variant</label>
-                <select name="product_variant_id" class="variant-select">
+            <label class="field-label">Color</label>
+            <select class="select-box" name="color">
+                <option>{{ $product->color ?? 'Silver' }}</option>
+            </select>
+
+            @if(isset($product->variants) && $product->variants->count() > 0)
+                <label class="field-label">Size</label>
+                <select class="select-box" name="product_variant_id">
                     @foreach($product->variants as $variant)
                         <option value="{{ $variant->id }}">
-                            {{ $variant->variant_name }} - Stock: {{ $variant->stock }}
+                            {{ $variant->variant_name ?? $variant->size }}
                         </option>
                     @endforeach
                 </select>
             @endif
 
-            <div class="quantity">
-                <label>Quantity</label>
-                <input type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}">
+            <div class="cart-row">
+                <div class="quantity-box">
+                    <button type="button" onclick="changeQty(-1)">−</button>
+                    <input id="qty" type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}">
+                    <button type="button" onclick="changeQty(1)">+</button>
+                </div>
+
+                <button type="submit" class="btn">
+                    🛍 &nbsp; Add to cart
+                </button>
+            </div>
+        </form>
+
+        <form action="{{ route('wishlist.store', $product) }}" method="POST" class="wishlist-form">
+            @csrf
+            <button type="submit" class="btn">♡ Add to wishlist</button>
+        </form>
+
+        <div class="accordion" style="margin-top: 28px;">
+            <div class="accordion-item">
+                <div class="accordion-title">
+                    <span>Description</span>
+                    <span>⌄</span>
+                </div>
+                <div class="accordion-content">
+                    {{ $product->description ?? 'A minimal jewelry piece designed for everyday styling.' }}
+                </div>
             </div>
 
-            <button type="submit" class="btn btn-dark">Add to Cart</button>
-            <button type="button" class="btn">Add to Wishlist</button>
-        </form>
-    </div>
-</div>
+            <div class="accordion-item">
+                <div class="accordion-title">
+                    <span>Contact</span>
+                    <span>⌄</span>
+                </div>
+                <div class="accordion-content">
+                    For product questions, please contact our customer service.
+                </div>
+            </div>
 
-@if($recommendedProducts->count() > 0)
-    <section class="recommended-section">
-        <h2 class="recommended-title">You may also like</h2>
-
-        <div class="recommended-grid">
-            @foreach($recommendedProducts as $recommended)
-                @php
-                    $mainImage = $recommended->images->where('is_main', 1)->first() ?? $recommended->images->first();
-                @endphp
-
-                <a href="{{ route('products.show', $recommended->slug) }}">
-                    <div class="image-box">
-                        @if($mainImage)
-                            <img src="{{ asset('storage/' . $mainImage->image_path) }}" alt="{{ $recommended->name }}">
-                        @else
-                            <img src="{{ asset('storage/products/default-jewelry.jpg') }}" alt="{{ $recommended->name }}">
-                        @endif
-                    </div>
-
-                    <div style="margin-top: 12px;">{{ $recommended->name }}</div>
-                    <div style="color: #555;">Rp {{ number_format($recommended->price, 0, ',', '.') }}</div>
-                </a>
-            @endforeach
+            <div class="accordion-item">
+                <div class="accordion-title">
+                    <span>Care Instruction</span>
+                    <span>⌄</span>
+                </div>
+                <div class="accordion-content">
+                    Keep away from water, perfume, and harsh chemicals. Store separately after use.
+                </div>
+            </div>
         </div>
-    </section>
-@endif
+    </aside>
+</section>
+
+<script>
+    function changeQty(amount) {
+        const input = document.getElementById('qty');
+        const current = parseInt(input.value || 1);
+        const min = parseInt(input.min || 1);
+        const max = parseInt(input.max || 999);
+
+        let next = current + amount;
+
+        if (next < min) next = min;
+        if (next > max) next = max;
+
+        input.value = next;
+    }
+</script>
 
 @endsection

@@ -296,11 +296,21 @@
             id="searchBar">
 
     </div>
-        <a href="#" class="icon">♡</a>
-        <a href="#" class="icon">
-            🛍
-            <span class="cart-count">0</span>
-        </a>
+        @auth
+    <a href="{{ route('wishlist.index') }}" class="icon">♡</a>
+
+    <a href="{{ route('cart.index') }}" class="icon">
+        🛍
+        <span class="cart-count">{{ $cartCount ?? 0 }}</span>
+    </a>
+@else
+    <a href="{{ route('login') }}" class="icon">♡</a>
+
+    <a href="{{ route('login') }}" class="icon">
+        🛍
+        <span class="cart-count">0</span>
+    </a>
+@endauth
     </div>
 </header>
 
@@ -314,3 +324,13 @@
 
 </body>
 </html>
+
+@auth
+    <a href="{{ route('wishlist.index') }}">Wishlist</a>
+    <a href="{{ route('cart.index') }}">Cart</a>
+    <a href="{{ route('customer.orders.index') }}">My Orders</a>
+
+    @if(Auth::user()->role === 'admin')
+        <a href="{{ route('admin.dashboard') }}">Admin</a>
+    @endif
+@endauth
