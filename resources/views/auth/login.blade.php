@@ -63,13 +63,33 @@
         padding: 12px;
         margin-bottom: 20px;
     }
+    .google-btn {
+    width: 100%;
+    height: 52px;
+    border: 1px solid #222;
+    background: white;
+    color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.divider-text {
+    text-align: center;
+    color: #777;
+    margin: 18px 0;
+    font-size: 13px;
+}
 </style>
 @endsection
 
 @section('content')
 
 <div class="auth-container">
-    <h1 class="auth-title">Customer Login</h1>
+    <h1 class="auth-title">Login</h1>
 
     @if ($errors->any())
         <div class="error">
@@ -89,18 +109,15 @@
         <button type="submit" class="btn">Login</button>
     </form>
 
+    <a href="{{ route('google.redirect') }}" class="google-btn">
+    Continue with Google
+</a>
+
     <div class="auth-links">
     <div>
         Do not have an account?
         <a href="{{ route('register') }}" class="auth-link">
             Register here
-        </a>
-    </div>
-
-    <div>
-        Admin?
-        <a href="{{ route('admin.login') }}" class="auth-link">
-            Admin login
         </a>
     </div>
 </div>

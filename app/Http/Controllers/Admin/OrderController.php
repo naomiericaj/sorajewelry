@@ -17,7 +17,6 @@ class OrderController extends Controller
         }
     }
 
-
     private function setupMidtrans()
     {
         Config::$serverKey = config('midtrans.server_key');
@@ -30,7 +29,7 @@ class OrderController extends Controller
     {
         $this->checkAdmin();
 
-        $orders = Order::with(['user', 'payment'])
+        $orders = Order::with(['user', 'payment', 'items'])
             ->latest()
             ->get();
 
@@ -58,7 +57,7 @@ class OrderController extends Controller
             'order_status' => $request->order_status,
         ]);
 
-        return back()->with('success', 'Order status updated.');
+        return back()->with('success', 'Order status updated successfully.');
     }
 
     public function checkPayment(Order $order)
@@ -91,6 +90,15 @@ class OrderController extends Controller
                     'payment_method' => $paymentType,
                     'payment_status' => 'pending',
                     'transaction_id' => $transactionId,
+                    'payment_response' => json_decode(json_encode($status), true),
+                ]);
+            } elseif ($transactionStatus === 'expire') {
+                $order->update([
+                    'order_status' => 'cancelled',
+                ]);
+
+                $order->payment()->update([
+                    'payment_status' => 'expired',
                     'payment_response' => json_decode(json_encode($status), true),
                 ]);
             }

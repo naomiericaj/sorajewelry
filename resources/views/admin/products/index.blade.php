@@ -59,6 +59,15 @@
     .pagination {
         margin-top: 25px;
     }
+
+    .edit-btn {
+    display: inline-block;
+    padding: 9px 14px;
+    background: #111;
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+}
 </style>
 @endsection
 
@@ -84,6 +93,7 @@
             <th>Stock</th>
             <th>Status</th>
             <th>Featured</th>
+            <th>Actions</th>
         </tr>
     </thead>
 
@@ -104,6 +114,10 @@
                 <td>{{ $product->stock }}</td>
                 <td>{{ ucfirst($product->status) }}</td>
                 <td>{{ $product->is_featured ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ route('admin.products.edit', $product->id) }}" class="edit-btn">
+                    Edit</a>
+                </td>
             </tr>
         @endforeach
     </tbody>

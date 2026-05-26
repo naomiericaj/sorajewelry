@@ -133,10 +133,13 @@
         <h2>{{ $pendingOrders }}</h2>
         <p>Pending Orders</p>
     </div>
-</div>
 
-<div style="margin-top:30px;">
+    <div style="margin-top:30px;">
     <a href="{{ route('admin.products.index') }}">Manage Products</a> |
     <a href="{{ route('admin.orders.index') }}">Manage Orders</a>
 </div>
+
+</div>
+
+
 @endsection

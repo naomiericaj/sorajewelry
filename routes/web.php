@@ -13,6 +13,8 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\ContactController;
+
 
 Route::middleware('auth')->group(function () {
     // Wishlist
@@ -103,4 +105,45 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 
     Route::post('/products', [AdminProductController::class, 'store'])
         ->name('products.store');
+        Route::get('/products/{product}/edit', [AdminProductController::class, 'edit'])
+    ->name('products.edit');
+
+Route::patch('/products/{product}', [AdminProductController::class, 'update'])
+    ->name('products.update');
+
+        
+});
+
+
+Route::get('/auth/google/redirect', [AuthController::class, 'redirectToGoogle'])
+    ->name('google.redirect');
+
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])
+    ->name('google.callback');
+
+// Customer contact page
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+
+// Customer order pages
+Route::middleware('auth')->group(function () {
+    Route::get('/my-orders', [CustomerOrderController::class, 'index'])
+        ->name('customer.orders.index');
+
+    Route::get('/my-orders/{order}', [CustomerOrderController::class, 'show'])
+        ->name('customer.orders.show');
+});
+
+// Admin order pages
+Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+    Route::get('/orders', [AdminOrderController::class, 'index'])
+        ->name('orders.index');
+
+    Route::get('/orders/{order}', [AdminOrderController::class, 'show'])
+        ->name('orders.show');
+
+    Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])
+        ->name('orders.updateStatus');
+
+    Route::get('/orders/{order}/check-payment', [AdminOrderController::class, 'checkPayment'])
+        ->name('orders.checkPayment');
 });

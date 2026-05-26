@@ -1,36 +1,160 @@
 @extends('layouts.app', ['title' => 'My Orders - Sora Jewelry'])
 
+@section('styles')
+<style>
+    .orders-page {
+        padding: 48px 38px 80px;
+    }
+
+    .orders-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        margin-bottom: 35px;
+    }
+
+    .orders-title {
+        font-family: Georgia, serif;
+        font-size: 38px;
+        font-weight: 400;
+        margin: 0;
+    }
+
+    .orders-subtitle {
+        color: #666;
+        margin-top: 8px;
+    }
+
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+    }
+
+    .orders-table th,
+    .orders-table td {
+        padding: 18px;
+        border-bottom: 1px solid #e8e8e5;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    .orders-table th {
+        font-weight: 500;
+        color: #555;
+        background: #f1f1ee;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 7px 12px;
+        border-radius: 30px;
+        background: #efefed;
+        font-size: 13px;
+    }
+
+    .badge-success {
+        background: #d9ead3;
+        color: #2f5d31;
+    }
+
+    .badge-pending {
+        background: #fff2cc;
+        color: #7a5a00;
+    }
+
+    .badge-failed {
+        background: #f4cccc;
+        color: #8b0000;
+    }
+
+    .action-link {
+        text-decoration: underline;
+        margin-right: 12px;
+    }
+
+    .empty {
+        background: white;
+        padding: 40px;
+        color: #666;
+    }
+
+    @media (max-width: 800px) {
+        .orders-table {
+            display: block;
+            overflow-x: auto;
+        }
+    }
+</style>
+@endsection
+
 @section('content')
-<h1>My Orders</h1>
 
-@if($orders->isEmpty())
-    <p>You have no orders yet.</p>
-@else
-    <table style="width:100%;background:white;border-collapse:collapse;">
-        <tr>
-            <th style="padding:12px;text-align:left;">Order Number</th>
-            <th style="padding:12px;text-align:left;">Total</th>
-            <th style="padding:12px;text-align:left;">Order Status</th>
-            <th style="padding:12px;text-align:left;">Payment</th>
-            <th style="padding:12px;text-align:left;">Action</th>
-        </tr>
+<section class="orders-page">
+    <div class="orders-header">
+        <div>
+            <h1 class="orders-title">My Orders</h1>
+            <div class="orders-subtitle">Track your orders and payment status.</div>
+        </div>
+    </div>
 
-        @foreach($orders as $order)
-            <tr>
-                <td style="padding:12px;">{{ $order->order_number }}</td>
-                <td style="padding:12px;">Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
-                <td style="padding:12px;">{{ ucfirst($order->order_status) }}</td>
-                <td style="padding:12px;">{{ ucfirst($order->payment->payment_status ?? 'pending') }}</td>
-                <td style="padding:12px;">
-                    <a href="{{ route('customer.orders.show', $order) }}">View</a>
+    @if($orders->isEmpty())
+        <div class="empty">
+            You have no orders yet.
+        </div>
+    @else
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <th>Order</th>
+                    <th>Date</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Order Status</th>
+                    <th>Payment</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
 
-                    @if(($order->payment->payment_status ?? 'pending') === 'pending')
-                        |
-                        <a href="{{ route('payment.show', $order) }}">Pay</a>
-                    @endif
-                </td>
-            </tr>
-        @endforeach
-    </table>
-@endif
+            <tbody>
+                @foreach($orders as $order)
+                    @php
+                        $paymentStatus = $order->payment->payment_status ?? 'pending';
+
+                        $paymentClass = 'badge-pending';
+
+                        if ($paymentStatus === 'success') {
+                            $paymentClass = 'badge-success';
+                        } elseif (in_array($paymentStatus, ['failed', 'expired'])) {
+                            $paymentClass = 'badge-failed';
+                        }
+                    @endphp
+
+                    <tr>
+                        <td>{{ $order->order_number }}</td>
+                        <td>{{ $order->created_at->format('d M Y') }}</td>
+                        <td>{{ $order->items->sum('quantity') }}</td>
+                        <td>Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
+                        <td>
+                            <span class="badge">{{ ucfirst($order->order_status) }}</span>
+                        </td>
+                        <td>
+                            <span class="badge {{ $paymentClass }}">
+                                {{ ucfirst($paymentStatus) }}
+                            </span>
+                        </td>
+                        <td>
+                            <a class="action-link" href="{{ route('customer.orders.show', $order) }}">View</a>
+
+                            @if($paymentStatus === 'pending')
+                                <a class="action-link" href="{{ route('payment.show', $order) }}">Pay</a>
+                            @endif
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @endif
+</section>
+
 @endsection

@@ -260,7 +260,7 @@
         <a href="{{ route('home') }}">Home</a>
         <a href="{{ route('products.index') }}">Catalogue</a>
         <a href="#">Collections</a>
-        <a href="#">Contact</a>
+        <a href="{{ route('contact') }}">Contact</a>
     </nav>
 
     <a href="{{ route('home') }}" class="logo">
