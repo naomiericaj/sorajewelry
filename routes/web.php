@@ -35,7 +35,8 @@ Route::middleware('auth')->group(function () {
 
     // Payment
     Route::get('/payment/{order}', [PaymentController::class, 'show'])->name('payment.show');
-    Route::get('/payment/{order}/check', [PaymentController::class, 'checkStatus'])->name('payment.check');
+    Route::post('/payment/{order}/finish', [PaymentController::class, 'finish'])
+    ->name('payment.finish');
 
     // Customer orders
     Route::get('/my-orders', [CustomerOrderController::class, 'index'])->name('customer.orders.index');

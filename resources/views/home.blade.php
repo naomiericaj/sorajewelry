@@ -170,6 +170,42 @@
         }
     }
 
+    .featured-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.featured-image-box {
+    width: 100%;
+    aspect-ratio: 1 / 1.25;
+    background: #efefed;
+    overflow: hidden;
+}
+
+.featured-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.featured-no-image {
+    width: 100%;
+    height: 100%;
+    background: #efefed;
+    color: #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.featured-info {
+    padding-top: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
     </style>
     @endsection
 
@@ -203,22 +239,24 @@
     <div class="featured-grid">
 
         @foreach($featuredProducts->concat($featuredProducts) as $product)
-            @php
-                $mainImage = $product->images->where('is_main', 1)->first() ?? $product->images->first();
-            @endphp
+           @php
+    $image = $product->images->where('is_main', 1)->first() ?? $product->images->first();
+@endphp
 
-            <a href="{{ route('products.show', $product->slug) }}">
-                <div class="product-image-box">
-                    @if($mainImage)
-                        <img src="{{ asset('storage/' . $mainImage->image_path) }}" alt="{{ $product->name }}">
-                    @else
-                        <img src="{{ asset('storage/products/default-jewelry.jpg') }}" alt="{{ $product->name }}">
-                    @endif
-                </div>
+<a href="{{ route('products.show', $product->slug) }}" class="featured-card">
+    <div class="featured-image-box">
+        @if($image)
+            <img src="{{ asset('storage/' . $image->image_path) }}" alt="{{ $product->name }}">
+        @else
+            <div class="featured-no-image">No Image</div>
+        @endif
+    </div>
 
-                <div class="product-name">{{ $product->name }}</div>
-                <div class="product-price">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
-            </a>
+    <div class="featured-info">
+        <div>{{ $product->name }}</div>
+        <div>Rp {{ number_format($product->discount_price ?? $product->price, 0, ',', '.') }}</div>
+    </div>
+</a>
         @endforeach
     </div>
     </div>

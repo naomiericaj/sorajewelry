@@ -85,6 +85,24 @@
             overflow-x: auto;
         }
     }
+
+    .pay-now-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
+    padding: 0 18px;
+    background: #111;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    border: 1px solid #111;
+}
+
+.pay-now-btn:hover {
+    background: transparent;
+    color: #111;
+}
 </style>
 @endsection
 
@@ -97,6 +115,32 @@
             <div class="orders-subtitle">Track your orders and payment status.</div>
         </div>
     </div>
+
+    @if(request('payment') === 'success')
+    <div class="payment-alert success">
+        Payment successful for order {{ request('order') }}. Your order is now being processed.
+    </div>
+@elseif(request('payment') === 'pending')
+    <div class="payment-alert pending">
+        Payment for order {{ request('order') }} is still pending. Please complete the payment if needed.
+    </div>
+@elseif(request('payment') === 'failed')
+    <div class="payment-alert failed">
+        Payment failed for order {{ request('order') }}. Please try again.
+    </div>
+@elseif(request('payment') === 'expired')
+    <div class="payment-alert failed">
+        Payment expired for order {{ request('order') }}.
+    </div>
+@elseif(request('payment') === 'closed')
+    <div class="payment-alert pending">
+        Payment popup was closed before completion for order {{ request('order') }}.
+    </div>
+@elseif(request('payment') === 'error')
+    <div class="payment-alert failed">
+        Payment result could not be saved. Please contact admin.
+    </div>
+@endif
 
     @if($orders->isEmpty())
         <div class="empty">

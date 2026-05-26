@@ -195,33 +195,9 @@
 
             @if($snapToken)
                 <button id="pay-button" class="pay-btn">
-                    Show QR / Pay with Midtrans
+                    Pay with Midtrans
                 </button>
-
-                <a href="{{ route('payment.check', $order) }}">
-                    <button class="secondary-btn">
-                        Check Payment Status
-                    </button>
-                </a>
-
-                <div class="note">
-                    <strong>Payment simulation steps:</strong><br>
-                    1. Click “Show QR / Pay with Midtrans”.<br>
-                    2. Choose QRIS or GoPay in the Midtrans popup.<br>
-                    3. Midtrans will show a QR/payment screen.<br>
-                    4. Complete the simulation through Midtrans Sandbox.<br>
-                    5. Click “Check Payment Status” to update your local database.
-                </div>
-            @else
-                <div class="error">
-                    Midtrans Snap token is not available.
-
-                    @if($midtransError)
-                        <br><br>
-                        <strong>Error:</strong> {{ $midtransError }}
-                    @endif
-                </div>
-            @endif
+@endif
         </div>
     </div>
 
@@ -273,25 +249,49 @@
         data-client-key="{{ config('midtrans.client_key') }}"></script>
 
     <script>
-        document.getElementById('pay-button').onclick = function () {
+        const payButton = document.getElementById('pay-button');
+
+        payButton.onclick = function () {
             window.snap.pay('{{ $snapToken }}', {
                 onSuccess: function(result) {
-                    alert('Payment success. Click Check Payment Status to update the order.');
-                    console.log(result);
+                    finishPayment(result);
                 },
                 onPending: function(result) {
-                    alert('Payment pending. Complete the simulation in Midtrans Sandbox.');
-                    console.log(result);
+                    finishPayment(result);
                 },
                 onError: function(result) {
-                    alert('Payment failed.');
-                    console.log(result);
+                    finishPayment({
+                        ...result,
+                        transaction_status: 'failure'
+                    });
                 },
                 onClose: function() {
-                    alert('Payment popup closed.');
+                    window.location.href = "{{ route('customer.orders.index', ['payment' => 'closed', 'order' => $order->order_number]) }}";
                 }
             });
         };
+
+        function finishPayment(result) {
+            fetch("{{ route('payment.finish', $order) }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({
+                    result: result
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = data.redirect_url;
+            })
+            .catch(error => {
+                console.error(error);
+                window.location.href = "{{ route('customer.orders.index', ['payment' => 'error', 'order' => $order->order_number]) }}";
+            });
+        }
     </script>
 @endif
 
