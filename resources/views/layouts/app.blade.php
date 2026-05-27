@@ -28,22 +28,23 @@
         }
 
         .navbar {
-        height: 70px;
+        height: 75px;
         display: grid;
         grid-template-columns: 1fr auto 1fr;
         align-items: center;
-        padding: 0 38px;
-        background: #f8f8f6;
+        padding: 0px 38px;
+        background: #edede9;
         position: sticky;
         top: 0;
         z-index: 100;
-        overflow: visible;
     }
 
         .nav-left {
             display: flex;
             gap: 28px;
             align-items: center;
+            justify-content: flex-start;
+            height: 100%;
         }
 
         .nav-left a {
@@ -95,13 +96,32 @@
         align-items: center;
     }
 
+    .nav-left a::after {
+        content: '';
+
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+
+        width: 0%;
+        height: 1px;
+
+        background: #b89b5e;
+
+        transition: 0.3s ease;
+    }
+
+    .nav-left a:hover::after {
+        width: 100%;
+    }
+
     .logo img {
-        height: 110px;
+        height: 220px;
         width: auto;
         object-fit: contain;
 
         position: relative;
-        top: 8px;
+        top: -64px;
 
         transition: 0.3s ease;
     }
@@ -114,6 +134,7 @@
             justify-content: flex-end;
             align-items: center;
             gap: 18px;
+            height: 100%;
         }
 
     .nav-button {
@@ -226,6 +247,30 @@
             font-size: 14px;
         }
 
+        .nav-right a,
+        .nav-left a,
+        .nav-button,
+        .icon,
+        .search-toggle {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-left,
+        .nav-right{
+            height: 100%;
+            display: flex;
+            align-items: center;
+            position: relative;
+            top: -70px;
+        }
+
+        .logo {
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
         @media (max-width: 768px) {
             .navbar {
                 grid-template-columns: 1fr;
@@ -264,8 +309,8 @@
     </nav>
 
     <a href="{{ route('home') }}" class="logo">
-    <img src="{{ asset('images/sora-logo (1).png') }}" alt="Sora Logo">
-</a>
+        <img src="{{ asset('images/sora-logo (1).png') }}" alt="Sora Logo">
+    </a>
 
     <div class="nav-right">
         @auth
