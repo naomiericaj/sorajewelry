@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Sora Jewelry' }}</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Cormorant+Garamond:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    
     <style>
         * {
             box-sizing: border-box;
@@ -25,6 +30,20 @@
 
         button {
             font-family: inherit;
+        }
+
+        .nav-left a,
+        .nav-right a,
+        .nav-button {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            font-weight: 1000;
+            letter-spacing: 0.5px;
+        }
+
+        .search-bar {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 14px;
         }
 
         .navbar {
@@ -48,7 +67,6 @@
         }
 
         .nav-left a {
-        font-size: 18px;
         color: #333;
 
         position: relative;
@@ -62,7 +80,6 @@
     }
     .nav-right a {
     position: relative;
-    font-size: 18px;
     transition: 0.3s ease;
     }
 
@@ -142,7 +159,6 @@
         border: none;
         cursor: pointer;
         color: #333;
-        font-size: 18px;
         padding: 0;
 
         position: relative;
@@ -364,7 +380,7 @@
 </main>
 
 <footer class="footer">
-    © {{ date('Y') }} Sora Jewelry
+    © {{ date('Y') }} Sora Jewelry. All rights reserved.
 </footer>
 
 </body>

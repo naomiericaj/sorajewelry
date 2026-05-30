@@ -85,68 +85,87 @@
         box-shadow: 0 10px 25px rgba(0,0,0,0.25);
     }
 
-        .section-title {
-            font-size: 26px;
-            font-weight: 400;
-            margin-bottom: 25px;
-        }
+    .section-title {
+        position: relative;
+        text-align: center;
+        font-size: 38px;
+        font-weight: 400;
+        margin-bottom: px;
+        letter-spacing: 0.5px;
+        font-family: 'Playfair Display', serif;
+        margin-bottom: 30px;
+        color: #4e443a;
+    }
 
-        .featured-wrapper {
-    overflow-x: auto;
+    .section-title::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 1px;
+        background: #2f2f2f;
+        margin: 12px auto 0;
+    }
 
-    scroll-behavior: smooth;
-
-    scrollbar-width: none;
-
-    width: 100%;
+    .featured-wrapper {
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+        width: 100%;
     }
 
     .featured-wrapper::-webkit-scrollbar {
         display: none;
     }
 
+    .featured-wrapper:hover .featured-grid {
+        animation-play-state: paused;
+    }
+
     .featured-grid {
         display: flex;
         gap: 20px;
+        width: max-content;
+        animation: marquee 120s linear infinite;
     }
 
     .featured-grid a {
         min-width: 250px;
         flex-shrink: 0;
-
         transition: 0.3s ease;
+        min-width: unset;
     }
 
     .featured-grid a:hover {
-        transform: translateY(-8px);
+        transform: none;
     }
 
-        .product-image-box {
-            background: #efefed;
-            aspect-ratio: 1 / 1.2;
-            overflow: hidden;
-        }
+    .product-image-box {
+        background: #efefed;
+        aspect-ratio: 1 / 1.2;
+        overflow: hidden;
+    }
 
-        .product-image-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    .product-image-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-        .product-name {
-            margin-top: 12px;
-        }
+    .product-name {
+        margin-top: 12px;
+    }
 
-        .product-price {
-            color: #555;
-            margin-top: 4px;
-        }
+    .product-price {
+        color: #555;
+        margin-top: 4px;
+    }
 
         @media (max-width: 900px) {
             .featured-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+
         @keyframes fadeUp {
         from {
             opacity: 0;
@@ -158,6 +177,7 @@
             transform: translateY(0);
         }
     }
+
     @keyframes fadeUp {
         from {
             opacity: 0;
@@ -170,41 +190,72 @@
         }
     }
 
+    @keyframes marquee {
+        from {
+            transform: translateX(0);
+        }
+
+        to {
+            transform: translateX(-50%);
+        }
+    }
+
     .featured-card {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-}
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        width: 500px;
+    }
 
-.featured-image-box {
-    width: 100%;
-    aspect-ratio: 1 / 1.25;
-    background: #efefed;
-    overflow: hidden;
-}
+    .featured-image-box {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        background: #efefed;
+        overflow: hidden;
+    }
 
-.featured-image-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
+    .featured-image-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.4s ease;
+    }
+    .featured-card:hover .featured-image-box img {
+        transform: scale(1.05);
+    }
 
-.featured-no-image {
-    width: 100%;
-    height: 100%;
-    background: #efefed;
-    color: #999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .featured-no-image {
+        width: 100%;
+        height: 100%;
+        background: #efefed;
+        color: #999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-.featured-info {
-    padding-top: 12px;
-    font-size: 14px;
-    line-height: 1.6;
-}
+    .featured-info {
+        padding-top: 12px;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .featured-name {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 22px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+    }
+
+    .featured-price {
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+        color: #666;
+        letter-spacing: 0.8px;
+        margin-top: 4px;
+    }
 
     </style>
     @endsection
@@ -253,8 +304,13 @@
     </div>
 
     <div class="featured-info">
-        <div>{{ $product->name }}</div>
-        <div>Rp {{ number_format($product->discount_price ?? $product->price, 0, ',', '.') }}</div>
+        <div class="featured-name">
+            {{ $product->name }}
+        </div>
+
+        <div class="featured-price">
+            Rp {{ number_format($product->discount_price ?? $product->price, 0, ',', '.') }}
+        </div>
     </div>
 </a>
         @endforeach
