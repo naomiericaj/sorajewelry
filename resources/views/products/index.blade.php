@@ -73,12 +73,22 @@
 
     .featured-badge {
         position: absolute;
-        top: 12px;
-        left: 12px;
-        background: #111;
-        color: white;
-        font-size: 12px;
-        padding: 7px 10px;
+        top: 14px;
+        left: 14px;
+
+        background: rgba(255,255,255,0.9);
+        backdrop-filter: blur(6px);
+
+        color: #4e443a;
+
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 1px;
+
+        padding: 6px 14px;
+        border-radius: 30px;
+
         z-index: 2;
     }
 
@@ -122,6 +132,23 @@
 
     .pagination-box {
         margin-top: 40px;
+    }
+
+    .product-image-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+
+        transition: transform 0.6s ease;
+    }
+
+    .product-card:hover .product-image-wrap img {
+        transform: scale(1.08);
+    }
+
+    .product-image-wrap {
+        overflow: hidden;
     }
 
     @media (max-width: 1100px) {
@@ -187,7 +214,7 @@
                 <a href="{{ route('products.show', $product->slug) }}" class="product-card">
                     <div class="product-image-wrap">
                         @if($product->is_featured)
-                            <span class="featured-badge">Featured</span>
+                            <span class="featured-badge">✦ Featured</span>
                         @endif
 
                         @if($image)
