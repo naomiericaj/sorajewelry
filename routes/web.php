@@ -14,6 +14,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\AiChatbotController;
 
 
 
@@ -143,6 +144,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/my-orders/{order}', [CustomerOrderController::class, 'show'])
         ->name('customer.orders.show');
 });
+
+Route::post('/ai-chatbot/message', [AiChatbotController::class, 'message'])
+    ->name('ai.chatbot.message');
 
 // Admin order pages
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {

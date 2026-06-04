@@ -316,5 +316,6 @@
         @endforeach
     </div>
     </div>
+    @include('components.chatbot')
 
     @endsection
