@@ -179,6 +179,190 @@
             text-align: left;
             margin-top: 5px;
         }
+        .catalogue-filters {
+    margin: 28px 0 36px;
+    padding: 18px;
+    background: #ffffff;
+    border: 1px solid #e1e1dd;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.catalogue-filters select,
+.catalogue-filters input {
+    height: 42px;
+    border: 1px solid #d8d8d4;
+    background: transparent;
+    padding: 0 12px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    min-width: 150px;
+}
+
+.filter-btn {
+    height: 42px;
+    border: 1px solid #111;
+    background: #111;
+    color: white;
+    padding: 0 22px;
+    cursor: pointer;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+}
+
+.clear-filter-btn {
+    height: 42px;
+    border: 1px solid #d8d8d4;
+    background: transparent;
+    color: #333;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-result-text {
+    margin-top: 12px;
+    color: #666;
+    font-size: 14px;
+}
+
+.search-result-text a {
+    margin-left: 10px;
+    text-decoration: underline;
+}
+
+.catalogue-filters {
+    margin: 28px 0 36px;
+    padding: 18px 20px;
+    background: #ffffff;
+    border: 1px solid #e1e1dd;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.catalogue-filters input,
+.catalogue-filters select {
+    height: 44px;
+    min-width: 165px;
+    border: 1px solid #d8d8d4;
+    background: #f8f8f6;
+    color: #333;
+    padding: 0 14px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    outline: none;
+}
+
+.catalogue-filters input {
+    min-width: 230px;
+}
+
+.catalogue-filters input::placeholder {
+    color: #999;
+}
+
+.catalogue-filters input:focus,
+.catalogue-filters select:focus {
+    border-color: #b89b5e;
+    background: #fff;
+}
+
+.filter-btn {
+    height: 44px;
+    border: 1px solid #111;
+    background: #111;
+    color: white;
+    padding: 0 24px;
+    cursor: pointer;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    transition: 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: #b89b5e;
+    border-color: #b89b5e;
+}
+
+.clear-filter-btn {
+    height: 44px;
+    border: 1px solid #d8d8d4;
+    background: transparent;
+    color: #333;
+    padding: 0 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    transition: 0.3s ease;
+}
+
+.clear-filter-btn:hover {
+    border-color: #b89b5e;
+    color: #b89b5e;
+}
+
+.search-result-text {
+    margin-top: 12px;
+    color: #666;
+    font-size: 15px;
+}
+
+.search-result-text strong {
+    color: #111;
+}
+
+.search-result-text a {
+    margin-left: 10px;
+    color: #b89b5e;
+    text-decoration: underline;
+}
+@media (max-width: 750px) {
+    .catalogue-page {
+        padding: 30px 18px 60px;
+    }
+
+    .catalogue-title {
+        font-size: 34px;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .product-info {
+        display: block;
+    }
+
+    .product-price {
+        text-align: left;
+        margin-top: 5px;
+    }
+
+    .catalogue-filters {
+        padding: 16px;
+        gap: 10px;
+    }
+
+    .catalogue-filters input,
+    .catalogue-filters select,
+    .filter-btn,
+    .clear-filter-btn {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .clear-filter-btn {
+        justify-content: center;
+    }
+}
     }
 </style>
 @endsection
@@ -196,8 +380,73 @@
             @else
                 {{ $products->count() }} items
             @endif
+
+            @if(request('search') || request('category') || request('sort') || request('featured') || request('discount'))
+    <div class="search-result-text">
+        Showing filtered results
+
+        @if(request('search'))
+            for: <strong>{{ request('search') }}</strong>
+        @endif
+
+        <a href="{{ route('products.index') }}">Clear all</a>
+    </div>
+@endif
         </div>
     </div>
+
+    <form action="{{ route('products.index') }}" method="GET" class="catalogue-filters">
+    {{-- <input
+        type="text"
+        name="search"
+        placeholder="Search products..."
+        value="{{ request('search') }}"
+    > --}}
+
+    <select name="category">
+        <option value="">All Categories</option>
+        @foreach($categories as $category)
+            <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                {{ $category->name }}
+            </option>
+        @endforeach
+    </select>
+
+    <select name="sort">
+        <option value="">Newest</option>
+        <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>
+            Price: Low to High
+        </option>
+        <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>
+            Price: High to Low
+        </option>
+        <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>
+            Name A-Z
+        </option>
+    </select>
+
+    <select name="featured">
+        <option value="">All Products</option>
+        <option value="1" {{ request('featured') == '1' ? 'selected' : '' }}>
+            Featured Only
+        </option>
+    </select>
+
+    <select name="discount">
+        <option value="">All Prices</option>
+        <option value="1" {{ request('discount') == '1' ? 'selected' : '' }}>
+            Discount Only
+        </option>
+    </select>
+
+    <button type="submit" class="filter-btn">
+        Apply
+    </button>
+
+    <a href="{{ route('products.index') }}" class="clear-filter-btn">
+        Clear
+    </a>
+</form>
 
     @if($products->isEmpty())
         <div class="empty-box">

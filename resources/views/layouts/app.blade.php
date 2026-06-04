@@ -310,6 +310,56 @@
                 padding: 20px;
             }
         }
+
+        .navbar-search {
+    display: flex;
+    align-items: center;
+    height: 38px;
+    border: 1px solid #d8d8d4;
+    background: transparent;
+    margin-left: 18px;
+}
+
+.navbar-search input {
+    width: 190px;
+    height: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0 12px;
+    font-size: 14px;
+    color: #111;
+}
+
+.navbar-search input::placeholder {
+    color: #999;
+}
+
+.navbar-search button {
+    height: 100%;
+    border: none;
+    border-left: 1px solid #d8d8d4;
+    background: #111;
+    color: white;
+    padding: 0 14px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.navbar-search button:hover {
+    background: #333;
+}
+
+@media (max-width: 800px) {
+    .navbar-search {
+        width: 100%;
+        margin: 14px 0 0;
+    }
+
+    .navbar-search input {
+        width: 100%;
+    }
+}
     </style>
 
     @yield('styles')
@@ -345,18 +395,18 @@
             <a href="{{ route('register') }}">Register</a>
         @endauth
 
-            <div class="search-container">
+      <form action="{{ route('products.index') }}" method="GET" class="navbar-search">
+    <input
+        type="text"
+        name="search"
+        placeholder="Search jewelry..."
+        value="{{ request('search') }}"
+    >
 
-        <button class="search-toggle" onclick="toggleSearch()">
-            ⌕
-        </button>
-
-        <input type="text"
-            placeholder="Search jewelry..."
-            class="search-bar"
-            id="searchBar">
-
-    </div>
+    <button type="submit">
+        Search
+    </button>
+</form>      
         @auth
     <a href="{{ route('wishlist.index') }}" class="icon">♡</a>
 
