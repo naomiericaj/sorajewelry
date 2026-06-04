@@ -15,6 +15,7 @@ use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AiChatbotController;
+use App\Http\Controllers\Admin\EventController;
 
 
 
@@ -54,7 +55,41 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     Route::patch('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
     Route::get('/orders/{order}/check-payment', [AdminOrderController::class, 'checkPayment'])->name('orders.checkPayment');
+
+    // Events
+Route::get('/events', [EventController::class, 'index'])
+    ->name('events.index');
+
+Route::get('/events/create', [EventController::class, 'create'])
+    ->name('events.create');
+
+Route::post('/events', [EventController::class, 'store'])
+    ->name('events.store');
+
+    Route::get('/events/{event}/edit', [EventController::class, 'edit'])
+    ->name('events.edit');
+
+Route::patch('/events/{event}', [EventController::class, 'update'])
+    ->name('events.update');
+
+Route::delete('/events/{event}', [EventController::class, 'destroy'])
+    ->name('events.destroy');
+
+Route::post('/events/{event}/send', [EventController::class, 'send'])
+    ->name('events.send');
 });
+
+Route::get('/events/{event}/edit', [EventController::class, 'edit'])
+    ->name('events.edit');
+
+Route::patch('/events/{event}', [EventController::class, 'update'])
+    ->name('events.update');
+
+Route::delete('/events/{event}', [EventController::class, 'destroy'])
+    ->name('events.destroy');
+
+Route::post('/events/{event}/send', [EventController::class, 'send'])
+    ->name('events.send');
 
 // HOME
 Route::get('/', [HomeController::class, 'index'])->name('home');

@@ -111,9 +111,17 @@
 @extends('layouts.app', ['title' => 'Admin Dashboard - Sora Jewelry'])
 
 @section('content')
-<h1>Admin Dashboard</h1>
 
-<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;">
+<h1 style="margin-bottom:30px;">Admin Dashboard</h1>
+
+{{-- Statistics --}}
+<div style="
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+margin-bottom:50px;
+">
+
     <div style="background:white;padding:25px;">
         <h2>{{ $totalProducts }}</h2>
         <p>Products</p>
@@ -134,12 +142,153 @@
         <p>Pending Orders</p>
     </div>
 
-    <div style="margin-top:30px;">
-    <a href="{{ route('admin.products.index') }}">Manage Products</a> |
-    <a href="{{ route('admin.orders.index') }}">Manage Orders</a>
 </div>
+{{-- Admin Menu --}}
+<div style="
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:30px;
+margin-top:20px;
+">
+
+    <a href="{{ route('admin.products.index') }}"
+    style="
+    background:white;
+    padding:40px;
+    border:1px solid #e5e5e5;
+    border-radius:18px;
+    color:#222;
+    text-decoration:none;
+    min-height:300px;
+    display:flex;
+    flex-direction:column;
+    transition:.3s;
+    ">
+
+        <div style="font-size:52px;">
+            📦
+        </div>
+
+        <h2 style="
+        margin:20px 0 15px;
+        font-size:48px;
+        font-weight:500;
+        ">
+            Products
+        </h2>
+
+        <p style="
+        font-size:22px;
+        line-height:1.6;
+        color:#666;
+        ">
+            View and manage jewelry products.
+        </p>
+
+        <div style="
+        margin-top:auto;
+        padding-top:30px;
+        color:#b89b5e;
+        font-size:20px;
+        font-weight:600;
+        ">
+            Manage Products →
+        </div>
+
+    </a>
+
+    <a href="{{ route('admin.orders.index') }}"
+    style="
+    background:white;
+    padding:40px;
+    border:1px solid #e5e5e5;
+    border-radius:18px;
+    color:#222;
+    text-decoration:none;
+    min-height:300px;
+    display:flex;
+    flex-direction:column;
+    transition:.3s;
+    ">
+
+        <div style="font-size:52px;">
+            📋
+        </div>
+
+        <h2 style="
+        margin:20px 0 15px;
+        font-size:48px;
+        font-weight:500;
+        ">
+            Orders
+        </h2>
+
+        <p style="
+        font-size:22px;
+        line-height:1.6;
+        color:#666;
+        ">
+            Track and update customer orders.
+        </p>
+
+        <div style="
+        margin-top:auto;
+        padding-top:30px;
+        color:#b89b5e;
+        font-size:20px;
+        font-weight:600;
+        ">
+            Manage Orders →
+        </div>
+
+    </a>
+
+    <a href="{{ route('admin.events.index') }}"
+    style="
+    background:white;
+    padding:40px;
+    border:1px solid #e5e5e5;
+    border-radius:18px;
+    color:#222;
+    text-decoration:none;
+    min-height:300px;
+    display:flex;
+    flex-direction:column;
+    transition:.3s;
+    ">
+
+        <div style="font-size:52px;">
+            📧
+        </div>
+
+        <h2 style="
+        margin:20px 0 15px;
+        font-size:48px;
+        font-weight:500;
+        ">
+            Events
+        </h2>
+
+        <p style="
+        font-size:22px;
+        line-height:1.6;
+        color:#666;
+        ">
+            Create and send promotional campaigns.
+        </p>
+
+        <div style="
+        margin-top:auto;
+        padding-top:30px;
+        color:#b89b5e;
+        font-size:20px;
+        font-weight:600;
+        ">
+            Manage Events →
+        </div>
+
+    </a>
 
 </div>
-
 
 @endsection

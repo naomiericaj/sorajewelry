@@ -368,11 +368,19 @@
 
 <header class="navbar">
     <nav class="nav-left">
-        <a href="{{ route('home') }}">Home</a>
-        <a href="{{ route('products.index') }}">Catalogue</a>
-        <a href="#">Collections</a>
-        <a href="{{ route('contact') }}">Contact</a>
-    </nav>
+    <a href="{{ route('home') }}">Home</a>
+    <a href="{{ route('products.index') }}">Catalogue</a>
+    
+@auth
+    @if(Auth::user()->role !== 'admin')
+        <a href="{{ route('customer.orders.index') }}">My Orders</a>
+    @endif
+@else
+    <a href="{{ route('login') }}">My Orders</a>
+@endauth
+
+    <a href="{{ route('contact') }}">About Us</a>
+</nav>
 
     <a href="{{ route('home') }}" class="logo">
         <img src="{{ asset('images/sora-logo (1).png') }}" alt="Sora Logo">
@@ -435,13 +443,3 @@
 
 </body>
 </html>
-
-@auth
-    <a href="{{ route('wishlist.index') }}">Wishlist</a>
-    <a href="{{ route('cart.index') }}">Cart</a>
-    <a href="{{ route('customer.orders.index') }}">My Orders</a>
-
-    @if(Auth::user()->role === 'admin')
-        <a href="{{ route('admin.dashboard') }}">Admin</a>
-    @endif
-@endauth

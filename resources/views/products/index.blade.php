@@ -9,7 +9,7 @@
     }
 
     .catalogue-header {
-        margin-bottom: 36px;
+        margin-bottom: 15px;
     }
 
     .catalogue-title {
@@ -21,14 +21,14 @@
 
     .catalogue-subtitle {
         color: #666;
-        margin-top: 8px;
-        font-size: 15px;
+        margin-top: 12px;
+        font-size: 18px;
     }
 
     .product-count {
-        margin-top: 18px;
+        margin-top: 5px;
         color: #777;
-        font-size: 14px;
+        font-size: 17px;
     }
 
     .product-grid {
@@ -247,15 +247,24 @@
 
 .catalogue-filters input,
 .catalogue-filters select {
-    height: 44px;
-    min-width: 165px;
-    border: 1px solid #d8d8d4;
-    background: #f8f8f6;
-    color: #333;
-    padding: 0 14px;
+    height: 48px;
+    min-width: 180px;
+
+    padding: 0 18px;
+
+    border: 1px solid #d8d2c8;
+    border-radius: 999px;
+
+    background: #fff;
+
+    color: #4e443a;
+
     font-family: 'Cormorant Garamond', serif;
-    font-size: 16px;
+    font-size: 17px;
+
     outline: none;
+
+    transition: all 0.3s ease;
 }
 
 .catalogue-filters input {
@@ -270,6 +279,8 @@
 .catalogue-filters select:focus {
     border-color: #b89b5e;
     background: #fff;
+
+        box-shadow: 0 0 0 4px rgba(184, 155, 94, 0.12);
 }
 
 .filter-btn {
@@ -364,6 +375,83 @@
     }
 }
     }
+    
+.catalogue-filters select {
+    height: 40px;
+    min-width: 180px;
+
+    padding: 0 18px;
+
+    border: 1px solid #d8d2c8;
+    border-radius: 999px;
+
+    background: #fff;
+
+    color: #4e443a;
+
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+
+    transition: all 0.3s ease;
+}
+
+.catalogue-filters select:focus {
+    border-color: #b89b5e;
+    box-shadow: 0 0 0 4px rgba(184, 155, 94, 0.12);
+}
+
+.catalogue-filters {
+    margin: 20px 0 20px;
+}
+
+.filter-btn,
+.clear-filter-btn {
+    height: 40px;
+    padding: 0 22px;
+
+    border-radius: 999px;
+    border: 1px solid #d8d2c8;
+
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+    cursor: pointer;
+
+    transition: all 0.3s ease;
+}
+
+.filter-btn {
+    background: #d7c3a3;
+    border-color: #d7c3a3;
+    color: #4e443a;
+    margin-left: 15px;
+}
+
+.filter-btn:hover {
+    background: #ccb089;
+    border-color: #ccb089;
+
+    box-shadow: 0 0 0 4px rgba(184, 155, 94, 0.12);
+}
+
+.clear-filter-btn {
+    background: #fff;
+    color: #4e443a;
+    margin-left: 5px;
+}
+
+.clear-filter-btn:hover {
+    border-color: #b89b5e;
+    color: #b89b5e;
+
+    box-shadow: 0 0 0 4px rgba(184, 155, 94, 0.12);
+}
+
 </style>
 @endsection
 
