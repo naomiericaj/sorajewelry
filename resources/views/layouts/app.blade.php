@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Sora Jewelry' }}</title>
 
@@ -359,10 +360,143 @@
     .navbar-search input {
         width: 100%;
     }
+
+    /* Add to cart / wishlist animation */
+.floating-toast {
+    position: fixed;
+    top: 95px;
+    right: 28px;
+    background: #111;
+    color: white;
+    padding: 14px 20px;
+    font-size: 14px;
+    z-index: 99999;
+    opacity: 0;
+    transform: translateY(-15px);
+    pointer-events: none;
+    transition: 0.3s ease;
+}
+
+.floating-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.cart-bounce,
+.wishlist-bounce {
+    animation: iconBounce 0.45s ease;
+}
+
+@keyframes iconBounce {
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(1.35);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.ajax-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
 }
     </style>
 
     @yield('styles')
+    <div id="floating-toast" class="floating-toast"></div>
+
+<script>
+    function showFloatingToast(message) {
+        const toast = document.getElementById('floating-toast');
+
+        if (!toast) return;
+
+        toast.textContent = message;
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 1800);
+    }
+
+    function bounceIcon(selector, bounceClass) {
+        const icon = document.querySelector(selector);
+
+        if (!icon) return;
+
+        icon.classList.remove(bounceClass);
+        void icon.offsetWidth;
+        icon.classList.add(bounceClass);
+    }
+
+    document.addEventListener('submit', function (event) {
+        const form = event.target;
+
+        if (!form.classList.contains('ajax-cart-form') && !form.classList.contains('ajax-wishlist-form')) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const isCart = form.classList.contains('ajax-cart-form');
+        const isWishlist = form.classList.contains('ajax-wishlist-form');
+
+        form.classList.add('ajax-loading');
+
+        fetch(form.action, {
+            method: form.method || 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            },
+            body: new FormData(form)
+        })
+        .then(response => response.json())
+        .then(data => {
+            form.classList.remove('ajax-loading');
+
+            if (data.success) {
+                showFloatingToast(data.message || 'Updated successfully.');
+
+                if (isCart) {
+                    bounceIcon('.cart-icon, .cart-link, a[href*="cart"]', 'cart-bounce');
+                }
+
+                if (isWishlist) {
+                    bounceIcon('.wishlist-icon, .wishlist-link, a[href*="wishlist"]', 'wishlist-bounce');
+                }
+
+                if (data.cart_count !== undefined) {
+                    const cartCount = document.querySelector('.cart-count');
+                    if (cartCount) {
+                        cartCount.textContent = data.cart_count;
+                    }
+                }
+
+                if (data.wishlist_count !== undefined) {
+                    const wishlistCount = document.querySelector('.wishlist-count');
+                    if (wishlistCount) {
+                        wishlistCount.textContent = data.wishlist_count;
+                    }
+                }
+            } else {
+                showFloatingToast(data.message || 'Something went wrong.');
+            }
+        })
+        .catch(error => {
+            form.classList.remove('ajax-loading');
+            showFloatingToast('Please login first or try again.');
+            console.error(error);
+        });
+    });
+</script>
 </head>
 <body>
 

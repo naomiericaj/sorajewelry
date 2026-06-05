@@ -42,6 +42,7 @@
         background: white;
         padding: 28px;
         margin-bottom: 22px;
+        border: 1px solid #eeeeea;
     }
 
     .box-title {
@@ -69,6 +70,13 @@
         background: transparent;
         padding: 14px;
         font-size: 15px;
+        outline: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: #b89b5e;
     }
 
     textarea {
@@ -92,17 +100,7 @@
         width: auto;
     }
 
-    .submit-btn {
-        width: 100%;
-        height: 58px;
-        background: #111;
-        color: white;
-        border: none;
-        cursor: pointer;
-        font-size: 15px;
-        margin-top: 10px;
-    }
-
+    .submit-btn,
     .upload-btn {
         width: 100%;
         height: 54px;
@@ -112,6 +110,12 @@
         cursor: pointer;
         font-size: 15px;
         margin-top: 14px;
+        transition: 0.3s ease;
+    }
+
+    .submit-btn:hover,
+    .upload-btn:hover {
+        background: #333;
     }
 
     .note {
@@ -121,24 +125,68 @@
         margin-top: 10px;
     }
 
-    .image-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 14px;
+    .main-preview {
+        background: #f1f1ee;
+        padding: 12px;
+        margin-bottom: 18px;
+        border: 1px solid #e1e1dd;
     }
 
-    .image-card {
+    .main-preview-image {
+        width: 100%;
+        height: 260px;
+        background: #efefed;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .main-preview-image img {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .main-preview-label {
+        margin-top: 10px;
+        font-size: 13px;
+        color: #555;
+        text-align: center;
+    }
+
+    .admin-image-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 10px;
+    }
+
+    .admin-image-card {
         background: #f1f1ee;
         border: 1px solid #e1e1dd;
         padding: 10px;
+        overflow: hidden;
     }
 
-    .image-card img {
+    .admin-image-preview {
         width: 100%;
-        height: 170px;
+        aspect-ratio: 1 / 1;
+        background: #efefed;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .admin-image-preview img {
+        width: 100%;
+        height: 100%;
+        max-width: 100%;
         object-fit: cover;
         display: block;
-        background: #eee;
     }
 
     .main-badge {
@@ -160,12 +208,20 @@
 
     .small-btn {
         width: 100%;
-        height: 38px;
+        height: 36px;
         border: 1px solid #111;
         background: transparent;
         color: #111;
         cursor: pointer;
         font-size: 13px;
+        padding: 0 8px;
+        line-height: 1;
+        transition: 0.3s ease;
+    }
+
+    .small-btn:hover {
+        background: #111;
+        color: white;
     }
 
     .danger-btn {
@@ -178,24 +234,22 @@
         color: white;
     }
 
-    .main-preview {
-        background: #f1f1ee;
-        padding: 12px;
-        margin-bottom: 18px;
+    .success-message {
+        background: #d9ead3;
+        color: #2f5d31;
+        padding: 14px 16px;
+        margin-bottom: 22px;
+        border: 1px solid #b6d7a8;
+        font-size: 14px;
     }
 
-    .main-preview img {
-        width: 100%;
-        height: 260px;
-        object-fit: cover;
-        display: block;
-    }
-
-    .main-preview-label {
-        margin-top: 10px;
-        font-size: 13px;
-        color: #555;
-        text-align: center;
+    .error-message {
+        background: #f4cccc;
+        color: #8b0000;
+        padding: 14px 16px;
+        margin-bottom: 22px;
+        border: 1px solid #e6b8af;
+        font-size: 14px;
     }
 
     @media (max-width: 1000px) {
@@ -206,6 +260,93 @@
         .two-col {
             grid-template-columns: 1fr;
         }
+
+        .admin-image-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 650px) {
+        .edit-product-page {
+            padding: 30px 18px 60px;
+        }
+
+        .page-header {
+            display: block;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 16px;
+        }
+
+        .admin-image-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .main-preview-image {
+            height: 220px;
+        }
+
+        /* FORCE FIX: admin product image size */
+.image-grid,
+.admin-image-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+    margin-top: 10px !important;
+}
+
+.image-card,
+.admin-image-card {
+    background: #f1f1ee !important;
+    border: 1px solid #e1e1dd !important;
+    padding: 10px !important;
+    overflow: hidden !important;
+    max-width: 100% !important;
+}
+
+.image-card img,
+.admin-image-preview img,
+.main-preview img,
+.main-preview-image img {
+    width: 100% !important;
+    height: 170px !important;
+    max-width: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+}
+
+.admin-image-preview {
+    width: 100% !important;
+    height: 170px !important;
+    background: #efefed !important;
+    overflow: hidden !important;
+}
+
+.main-preview img,
+.main-preview-image img {
+    height: 260px !important;
+}
+
+.image-actions,
+.image-card form,
+.admin-image-card form {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.small-btn,
+.danger-btn,
+.image-actions button,
+.admin-image-card button {
+    width: 100% !important;
+    height: 36px !important;
+    max-height: 36px !important;
+    padding: 0 8px !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
+}
     }
 </style>
 @endsection
@@ -223,6 +364,20 @@
 
         <a href="{{ route('admin.products.index') }}" class="back-link">Back to products</a>
     </div>
+
+    @if(session('success'))
+        <div class="success-message">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="error-message">
+            @foreach($errors->all() as $error)
+                <div>{{ $error }}</div>
+            @endforeach
+        </div>
+    @endif
 
     <div class="form-grid">
         <div>
@@ -345,7 +500,7 @@
                         <input type="file" name="images[]" multiple accept="image/*" required>
 
                         <div class="note">
-                            You can upload as many product images as you want. If this product has no images yet, the first uploaded image will become the main image automatically.
+                            You can upload multiple product images. If this product has no images yet, the first uploaded image will become the main image automatically.
                         </div>
                     </div>
 
@@ -359,13 +514,18 @@
                 <h2 class="box-title">Main Image Preview</h2>
 
                 @php
-                    $mainImage = $product->images->where('is_main', 1)->first();
+                    $mainImage = $product->images->where('is_main', 1)->first() ?? $product->images->first();
                 @endphp
 
                 @if($mainImage)
                     <div class="main-preview">
-                        <img src="{{ asset('storage/' . $mainImage->image_path) }}" alt="{{ $product->name }}">
-                        <div class="main-preview-label">Currently selected main image</div>
+                        <div class="main-preview-image">
+                            <img src="{{ asset('storage/' . $mainImage->image_path) }}" alt="{{ $product->name }}">
+                        </div>
+
+                        <div class="main-preview-label">
+                            Currently selected main image
+                        </div>
                     </div>
                 @else
                     <p class="note">
@@ -382,10 +542,12 @@
                         No images uploaded yet. Use the upload box above to add product images.
                     </p>
                 @else
-                    <div class="image-grid">
+                    <div class="admin-image-grid">
                         @foreach($product->images as $image)
-                            <div class="image-card">
-                                <img src="{{ asset('storage/' . $image->image_path) }}" alt="{{ $product->name }}">
+                            <div class="admin-image-card">
+                                <div class="admin-image-preview">
+                                    <img src="{{ asset('storage/' . $image->image_path) }}" alt="{{ $product->name }}">
+                                </div>
 
                                 @if($image->is_main)
                                     <span class="main-badge">Main Image</span>
@@ -396,7 +558,7 @@
                                             @method('PATCH')
 
                                             <button type="submit" class="small-btn">
-                                                Make Main Image
+                                                Make Main
                                             </button>
                                         </form>
                                     </div>
@@ -408,7 +570,7 @@
                                         @method('DELETE')
 
                                         <button type="submit" class="small-btn danger-btn">
-                                            Delete Image
+                                            Delete
                                         </button>
                                     </form>
                                 </div>
