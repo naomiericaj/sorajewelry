@@ -412,40 +412,25 @@
     <div id="floating-toast" class="floating-toast"></div>
 
 <script>
-    function showFloatingToast(message) {
-        const toast = document.getElementById('floating-toast');
-
-        if (!toast) return;
-
-        toast.textContent = message;
-        toast.classList.add('show');
-
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 1800);
-    }
-
-    function bounceIcon(selector, bounceClass) {
-        const icon = document.querySelector(selector);
-
-        if (!icon) return;
-
-        icon.classList.remove(bounceClass);
-        void icon.offsetWidth;
-        icon.classList.add(bounceClass);
-    }
-
     document.addEventListener('submit', function (event) {
         const form = event.target;
 
-        if (!form.classList.contains('ajax-cart-form') && !form.classList.contains('ajax-wishlist-form')) {
+        const isCart = form.classList.contains('ajax-cart-form');
+        const isWishlist = form.classList.contains('ajax-wishlist-form');
+
+        if (!isCart && !isWishlist) {
             return;
         }
 
         event.preventDefault();
 
-        const isCart = form.classList.contains('ajax-cart-form');
-        const isWishlist = form.classList.contains('ajax-wishlist-form');
+        const button = form.querySelector('button[type="submit"]');
+
+        if (!button) {
+            return;
+        }
+
+        const originalText = button.dataset.originalText || button.innerHTML;
 
         form.classList.add('ajax-loading');
 
@@ -458,43 +443,68 @@
             },
             body: new FormData(form)
         })
-        .then(response => response.json())
+        .then(response => {
+            if (response.status === 401 || response.status === 419) {
+                window.location.href = "{{ route('login') }}";
+                return;
+            }
+
+            return response.json();
+        })
         .then(data => {
             form.classList.remove('ajax-loading');
 
-            if (data.success) {
-                showFloatingToast(data.message || 'Updated successfully.');
+            if (!data || !data.success) {
+                button.innerHTML = '!';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                }, 1200);
+                return;
+            }
 
-                if (isCart) {
-                    bounceIcon('.cart-icon, .cart-link, a[href*="cart"]', 'cart-bounce');
-                }
+            button.classList.add('added');
+            button.innerHTML = '✓';
 
-                if (isWishlist) {
-                    bounceIcon('.wishlist-icon, .wishlist-link, a[href*="wishlist"]', 'wishlist-bounce');
-                }
+            setTimeout(() => {
+                button.classList.remove('added');
+                button.innerHTML = originalText;
+            }, 1400);
 
-                if (data.cart_count !== undefined) {
-                    const cartCount = document.querySelector('.cart-count');
-                    if (cartCount) {
-                        cartCount.textContent = data.cart_count;
-                    }
-                }
+            if (data.cart_count !== undefined) {
+                const cartCount = document.querySelector('.cart-count');
 
-                if (data.wishlist_count !== undefined) {
-                    const wishlistCount = document.querySelector('.wishlist-count');
-                    if (wishlistCount) {
-                        wishlistCount.textContent = data.wishlist_count;
-                    }
+                if (cartCount) {
+                    cartCount.textContent = data.cart_count;
                 }
-            } else {
-                showFloatingToast(data.message || 'Something went wrong.');
+            }
+
+            if (data.wishlist_count !== undefined) {
+                const wishlistCount = document.querySelector('.wishlist-count');
+
+                if (wishlistCount) {
+                    wishlistCount.textContent = data.wishlist_count;
+                }
             }
         })
         .catch(error => {
             form.classList.remove('ajax-loading');
-            showFloatingToast('Please login first or try again.');
+
+            button.innerHTML = '!';
+            setTimeout(() => {
+                button.innerHTML = originalText;
+            }, 1200);
+
             console.error(error);
         });
+    });
+</script>
+
+<script>
+    document.addEventListener('click', function (event) {
+        if (event.target.closest('.product-action-icons')) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
     });
 </script>
 </head>

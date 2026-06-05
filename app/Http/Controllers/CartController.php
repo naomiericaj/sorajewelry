@@ -43,6 +43,13 @@ class CartController extends Controller
         ]);
 
         if ($product->stock < $request->quantity) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Not enough stock available.',
+                ], 422);
+            }
+
             return back()->withErrors([
                 'quantity' => 'Not enough stock available.',
             ]);
@@ -68,28 +75,38 @@ class CartController extends Controller
             ]);
         }
 
+        if ($request->expectsJson()) {
+            $cartCount = $cart->items()->sum('quantity');
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Added to cart.',
+                'cart_count' => $cartCount,
+            ]);
+        }
+
         return redirect()->route('cart.index')->with('success', 'Product added to cart.');
     }
 
     public function update(Request $request, CartItem $cartItem)
-{
-    if ($cartItem->cart->user_id !== Auth::id()) {
-        abort(403);
+    {
+        if ($cartItem->cart->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $cartItem->update([
+            'quantity' => $request->quantity,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cart updated.',
+        ]);
     }
-
-    $request->validate([
-        'quantity' => 'required|integer|min:1',
-    ]);
-
-    $cartItem->update([
-        'quantity' => $request->quantity,
-    ]);
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Cart updated.',
-    ]);
-}
 
     public function destroy(CartItem $cartItem)
     {
