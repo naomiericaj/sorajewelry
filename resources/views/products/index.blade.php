@@ -53,10 +53,10 @@
         color: inherit;
         text-decoration: none;
         position: relative;
-        z-index: 1;
     }
 
-    .product-card-link {
+    .product-card-link,
+    .product-image-link {
         display: block;
         color: inherit;
         text-decoration: none;
@@ -97,7 +97,7 @@
         position: absolute;
         top: 14px;
         left: 14px;
-        background: rgba(255,255,255,0.9);
+        background: rgba(255, 255, 255, 0.9);
         backdrop-filter: blur(6px);
         color: #4e443a;
         font-family: 'Cormorant Garamond', serif;
@@ -107,6 +107,50 @@
         padding: 6px 14px;
         border-radius: 30px;
         z-index: 2;
+    }
+
+    .product-action-icons {
+        position: absolute;
+        right: 14px;
+        bottom: 14px;
+        display: flex;
+        gap: 8px;
+        z-index: 30;
+    }
+
+    .circle-action-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: 1px solid rgba(17, 17, 17, 0.16);
+        background: rgba(255, 255, 255, 0.94);
+        color: #111;
+        cursor: pointer;
+        font-size: 17px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(8px);
+        transition: 0.25s ease;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        padding: 0;
+    }
+
+    .circle-action-btn:hover {
+        background: #111;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .circle-action-btn.added {
+        background: #d7c3a3;
+        border-color: #d7c3a3;
+        color: #4e443a;
+    }
+
+    .circle-action-btn.ajax-loading {
+        opacity: 0.7;
+        pointer-events: none;
     }
 
     .product-info {
@@ -139,57 +183,6 @@
         text-decoration: line-through;
         font-size: 13px;
         margin-top: 3px;
-    }
-
-    .catalogue-cart-form {
-        margin-top: 12px;
-    }
-
-    .catalogue-cart-btn {
-        width: 100%;
-        height: 42px;
-        border: 1px solid #111;
-        background: transparent;
-        color: #111;
-        cursor: pointer;
-        font-size: 14px;
-        transition: 0.3s ease;
-    }
-
-    .catalogue-cart-btn:hover {
-        background: #111;
-        color: white;
-    }
-
-    .catalogue-cart-btn.added {
-        background: #d7c3a3;
-        border-color: #d7c3a3;
-        color: #4e443a;
-    }
-
-    .ajax-loading {
-        opacity: 0.6;
-        pointer-events: none;
-    }
-
-    .floating-toast {
-        position: fixed;
-        top: 95px;
-        right: 28px;
-        background: #111;
-        color: white;
-        padding: 14px 20px;
-        font-size: 14px;
-        z-index: 99999;
-        opacity: 0;
-        transform: translateY(-15px);
-        pointer-events: none;
-        transition: 0.3s ease;
-    }
-
-    .floating-toast.show {
-        opacity: 1;
-        transform: translateY(0);
     }
 
     .empty-box {
@@ -231,9 +224,16 @@
             margin-top: 5px;
         }
 
-        .catalogue-cart-btn {
-            height: 40px;
-            font-size: 13px;
+        .product-action-icons {
+            right: 10px;
+            bottom: 10px;
+            gap: 6px;
+        }
+
+        .circle-action-btn {
+            width: 36px;
+            height: 36px;
+            font-size: 15px;
         }
     }
 </style>
@@ -278,8 +278,8 @@
                 @endphp
 
                 <div class="product-card">
-                    <a href="{{ route('products.show', $product->slug) }}" class="product-card-link">
-                        <div class="product-image-wrap">
+                    <div class="product-image-wrap">
+                        <a href="{{ route('products.show', $product->slug) }}" class="product-image-link">
                             @if($product->is_featured)
                                 <span class="featured-badge">✦ Featured</span>
                             @endif
@@ -289,8 +289,32 @@
                             @else
                                 <div class="no-image-box">No Image</div>
                             @endif
-                        </div>
+                        </a>
 
+                        <div class="product-action-icons">
+                            <button
+                                type="button"
+                                class="circle-action-btn ajax-wishlist-btn"
+                                data-url="{{ route('wishlist.store', $product) }}"
+                                data-original-text="♡"
+                                title="Add to wishlist"
+                            >
+                                ♡
+                            </button>
+
+                            <button
+                                type="button"
+                                class="circle-action-btn ajax-cart-btn"
+                                data-url="{{ route('cart.store', $product) }}"
+                                data-original-text="🛍"
+                                title="Add to cart"
+                            >
+                                🛍
+                            </button>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('products.show', $product->slug) }}" class="product-card-link">
                         <div class="product-info">
                             <div class="product-name">
                                 {{ $product->name }}
@@ -311,16 +335,6 @@
                             </div>
                         </div>
                     </a>
-
-                    <form action="{{ route('cart.store', $product) }}" method="POST" class="ajax-cart-form catalogue-cart-form">
-                        @csrf
-
-                        <input type="hidden" name="quantity" value="1">
-
-                        <button type="submit" class="catalogue-cart-btn">
-                            🛍 Add to Cart
-                        </button>
-                    </form>
                 </div>
             @endforeach
         </div>
@@ -333,85 +347,94 @@
     @endif
 </section>
 
-<div id="floating-toast" class="floating-toast"></div>
-
 <script>
-    function showFloatingToast(message) {
-        const toast = document.getElementById('floating-toast');
+    document.addEventListener('click', function (event) {
+        const button = event.target.closest('.ajax-cart-btn, .ajax-wishlist-btn');
 
-        if (!toast) return;
-
-        toast.textContent = message;
-        toast.classList.add('show');
-
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 1800);
-    }
-
-    document.addEventListener('submit', function (event) {
-        const form = event.target;
-
-        if (!form.classList.contains('ajax-cart-form')) {
+        if (!button) {
             return;
         }
 
         event.preventDefault();
+        event.stopPropagation();
 
-        const button = form.querySelector('button[type="submit"]');
-        const originalText = button ? button.innerHTML : '';
+        const isCart = button.classList.contains('ajax-cart-btn');
+        const isWishlist = button.classList.contains('ajax-wishlist-btn');
+        const originalText = button.dataset.originalText || button.innerHTML;
+        const url = button.dataset.url;
 
-        form.classList.add('ajax-loading');
+        button.classList.add('ajax-loading');
 
-        fetch(form.action, {
+        const formData = new FormData();
+
+        if (isCart) {
+            formData.append('quantity', '1');
+        }
+
+        fetch(url, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'application/json'
             },
-            body: new FormData(form)
+            body: formData
         })
-        .then(response => {
+        .then(async response => {
             if (response.status === 401 || response.status === 419) {
-                throw new Error('auth');
+                window.location.href = "{{ route('login') }}";
+                return null;
             }
 
-            return response.json();
+            if (!response.ok) {
+                console.error(await response.text());
+                return null;
+            }
+
+            return await response.json();
         })
         .then(data => {
-            form.classList.remove('ajax-loading');
+            button.classList.remove('ajax-loading');
 
-            if (data.success) {
-                showFloatingToast(data.message || 'Added to cart.');
+            if (!data || !data.success) {
+                button.innerHTML = '!';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                }, 1200);
+                return;
+            }
 
-                if (button) {
-                    button.classList.add('added');
-                    button.innerHTML = '✓ Added';
+            button.classList.add('added');
+            button.innerHTML = '✓';
 
-                    setTimeout(() => {
-                        button.classList.remove('added');
-                        button.innerHTML = originalText;
-                    }, 1400);
-                }
+            setTimeout(() => {
+                button.classList.remove('added');
+                button.innerHTML = originalText;
+            }, 1400);
 
+            if (isCart && data.cart_count !== undefined) {
                 const cartCount = document.querySelector('.cart-count');
 
-                if (cartCount && data.cart_count !== undefined) {
+                if (cartCount) {
                     cartCount.textContent = data.cart_count;
                 }
-            } else {
-                showFloatingToast(data.message || 'Could not add to cart.');
+            }
+
+            if (isWishlist && data.wishlist_count !== undefined) {
+                const wishlistCount = document.querySelector('.wishlist-count');
+
+                if (wishlistCount) {
+                    wishlistCount.textContent = data.wishlist_count;
+                }
             }
         })
         .catch(error => {
-            form.classList.remove('ajax-loading');
+            button.classList.remove('ajax-loading');
 
-            if (error.message === 'auth') {
-                showFloatingToast('Please login first.');
-            } else {
-                showFloatingToast('Something went wrong.');
-            }
+            button.innerHTML = '!';
+            setTimeout(() => {
+                button.innerHTML = originalText;
+            }, 1200);
 
             console.error(error);
         });

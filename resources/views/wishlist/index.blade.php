@@ -113,19 +113,19 @@
                         </div>
                     </a>
 
-                    <div class="wishlist-actions">
-                        <form action="{{ route('cart.store', $product) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="quantity" value="1">
-                            <button class="btn btn-dark" type="submit">Add to cart</button>
-                        </form>
+                   <div class="wishlist-actions">
+    <form action="{{ route('cart.store', $product) }}" method="POST" class="ajax-cart-form">
+        @csrf
+        <input type="hidden" name="quantity" value="1">
+        <button class="btn btn-dark" type="submit">Add to cart</button>
+    </form>
 
-                        <form action="{{ route('wishlist.destroy', $product) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn" type="submit">Remove</button>
-                        </form>
-                    </div>
+    <form action="{{ route('wishlist.destroy', $product) }}" method="POST">
+        @csrf
+        @method('DELETE')
+        <button class="btn btn-danger" type="submit">Remove</button>
+    </form>
+</div>
                 </div>
             @endforeach
         </div>
