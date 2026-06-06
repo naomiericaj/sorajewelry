@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Sora Jewelry' }}</title>
 
@@ -359,20 +360,171 @@
     .navbar-search input {
         width: 100%;
     }
+
+    /* Add to cart / wishlist animation */
+.floating-toast {
+    position: fixed;
+    top: 95px;
+    right: 28px;
+    background: #111;
+    color: white;
+    padding: 14px 20px;
+    font-size: 14px;
+    z-index: 99999;
+    opacity: 0;
+    transform: translateY(-15px);
+    pointer-events: none;
+    transition: 0.3s ease;
+}
+
+.floating-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.cart-bounce,
+.wishlist-bounce {
+    animation: iconBounce 0.45s ease;
+}
+
+@keyframes iconBounce {
+    0% {
+        transform: scale(1);
+    }
+
+    40% {
+        transform: scale(1.35);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.ajax-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
 }
     </style>
 
     @yield('styles')
+    <div id="floating-toast" class="floating-toast"></div>
+
+<script>
+    document.addEventListener('submit', function (event) {
+        const form = event.target;
+
+        const isCart = form.classList.contains('ajax-cart-form');
+        const isWishlist = form.classList.contains('ajax-wishlist-form');
+
+        if (!isCart && !isWishlist) {
+            return;
+        }
+
+        event.preventDefault();
+
+        const button = form.querySelector('button[type="submit"]');
+
+        if (!button) {
+            return;
+        }
+
+        const originalText = button.dataset.originalText || button.innerHTML;
+
+        form.classList.add('ajax-loading');
+
+        fetch(form.action, {
+            method: form.method || 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            },
+            body: new FormData(form)
+        })
+        .then(response => {
+            if (response.status === 401 || response.status === 419) {
+                window.location.href = "{{ route('login') }}";
+                return;
+            }
+
+            return response.json();
+        })
+        .then(data => {
+            form.classList.remove('ajax-loading');
+
+            if (!data || !data.success) {
+                button.innerHTML = '!';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                }, 1200);
+                return;
+            }
+
+            button.classList.add('added');
+            button.innerHTML = '✓';
+
+            setTimeout(() => {
+                button.classList.remove('added');
+                button.innerHTML = originalText;
+            }, 1400);
+
+            if (data.cart_count !== undefined) {
+                const cartCount = document.querySelector('.cart-count');
+
+                if (cartCount) {
+                    cartCount.textContent = data.cart_count;
+                }
+            }
+
+            if (data.wishlist_count !== undefined) {
+                const wishlistCount = document.querySelector('.wishlist-count');
+
+                if (wishlistCount) {
+                    wishlistCount.textContent = data.wishlist_count;
+                }
+            }
+        })
+        .catch(error => {
+            form.classList.remove('ajax-loading');
+
+            button.innerHTML = '!';
+            setTimeout(() => {
+                button.innerHTML = originalText;
+            }, 1200);
+
+            console.error(error);
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('click', function (event) {
+        if (event.target.closest('.product-action-icons')) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    });
+</script>
 </head>
 <body>
 
 <header class="navbar">
     <nav class="nav-left">
-        <a href="{{ route('home') }}">Home</a>
-        <a href="{{ route('products.index') }}">Catalogue</a>
-        <a href="#">Collections</a>
-        <a href="{{ route('contact') }}">Contact</a>
-    </nav>
+    <a href="{{ route('home') }}">Home</a>
+    <a href="{{ route('products.index') }}">Catalogue</a>
+    
+@auth
+    @if(Auth::user()->role !== 'admin')
+        <a href="{{ route('customer.orders.index') }}">My Orders</a>
+    @endif
+@else
+    <a href="{{ route('login') }}">My Orders</a>
+@endauth
+
+    <a href="{{ route('contact') }}">About Us</a>
+</nav>
 
     <a href="{{ route('home') }}" class="logo">
         <img src="{{ asset('images/sora-logo (1).png') }}" alt="Sora Logo">
@@ -435,13 +587,3 @@
 
 </body>
 </html>
-
-@auth
-    <a href="{{ route('wishlist.index') }}">Wishlist</a>
-    <a href="{{ route('cart.index') }}">Cart</a>
-    <a href="{{ route('customer.orders.index') }}">My Orders</a>
-
-    @if(Auth::user()->role === 'admin')
-        <a href="{{ route('admin.dashboard') }}">Admin</a>
-    @endif
-@endauth

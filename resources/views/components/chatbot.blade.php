@@ -1,6 +1,7 @@
 <div id="sora-chatbot">
-    <button id="sora-chat-toggle" type="button">
-        AI Chat
+    <button id="sora-chat-toggle" class="sora-chat-toggle" aria-label="Open Sora Assistant">
+        <span class="sora-chat-sparkle">✦</span>
+        <span class="sora-chat-icon">AI</span>
     </button>
 
     <div id="sora-chat-panel">
@@ -21,6 +22,7 @@
 
         <form id="sora-chat-form">
             @csrf
+
             <input
                 type="text"
                 id="sora-chat-input"
@@ -45,19 +47,78 @@
         font-family: Arial, sans-serif;
     }
 
-    #sora-chat-toggle {
+    .sora-chat-toggle {
         position: fixed;
-        right: 24px;
-        bottom: 24px;
-        width: 82px;
-        height: 52px;
+        right: 28px;
+        bottom: 28px;
+
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+
         border: none;
-        background: #111;
+        background: linear-gradient(135deg, #111 0%, #3a3028 45%, #d7c3a3 100%);
         color: white;
+
         cursor: pointer;
-        font-size: 14px;
-        box-shadow: 0 8px 24px rgba(0,0,0,.22);
         z-index: 100000;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        box-shadow: 0 16px 38px rgba(0, 0, 0, 0.24);
+        transition: all 0.3s ease;
+    }
+
+    .sora-chat-toggle:hover {
+        transform: translateY(-4px) scale(1.04);
+        box-shadow: 0 20px 48px rgba(0, 0, 0, 0.3);
+    }
+
+    .sora-chat-toggle:active {
+        transform: scale(0.96);
+    }
+
+    .sora-chat-toggle::before {
+        content: "";
+        position: absolute;
+        inset: -6px;
+        border-radius: 50%;
+        border: 1px solid rgba(215, 195, 163, 0.7);
+        animation: soraChatPulse 1.9s infinite;
+    }
+
+    .sora-chat-icon {
+        font-family: Georgia, serif;
+        font-size: 20px;
+        letter-spacing: 1px;
+        font-weight: 500;
+    }
+
+    .sora-chat-sparkle {
+        position: absolute;
+        top: 12px;
+        right: 14px;
+        font-size: 15px;
+        color: #fff6df;
+    }
+
+    @keyframes soraChatPulse {
+        0% {
+            transform: scale(0.92);
+            opacity: 0.8;
+        }
+
+        70% {
+            transform: scale(1.2);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1.2);
+            opacity: 0;
+        }
     }
 
     #sora-chat-panel {
@@ -67,12 +128,16 @@
         width: 400px;
         max-width: 92vw;
         height: 100vh;
+
         background: #f8f8f6;
         border-left: 1px solid #ddd;
-        box-shadow: -12px 0 35px rgba(0,0,0,.18);
+        box-shadow: -12px 0 35px rgba(0, 0, 0, 0.18);
+
         display: grid;
         grid-template-rows: auto 1fr auto;
-        transition: right .3s ease;
+
+        transition: right 0.3s ease;
+        z-index: 100001;
     }
 
     #sora-chat-panel.open {
@@ -80,7 +145,7 @@
     }
 
     .sora-chat-header {
-        background: #a7ad98;
+        background: linear-gradient(135deg, #111 0%, #4e443a 60%, #a7ad98 100%);
         color: white;
         padding: 20px;
         display: flex;
@@ -90,14 +155,16 @@
 
     .sora-chat-header strong {
         display: block;
-        font-size: 18px;
+        font-family: Georgia, serif;
+        font-size: 19px;
+        font-weight: 400;
         margin-bottom: 5px;
     }
 
     .sora-chat-header span {
         display: block;
         font-size: 12px;
-        opacity: .9;
+        opacity: 0.9;
         line-height: 1.4;
     }
 
@@ -122,18 +189,21 @@
         font-size: 14px;
         line-height: 1.5;
         white-space: pre-line;
+        border-radius: 16px;
     }
 
     .sora-message.bot {
         background: white;
         color: #333;
         border: 1px solid #e4e4df;
+        border-bottom-left-radius: 4px;
     }
 
     .sora-message.user {
         background: #111;
         color: white;
         margin-left: auto;
+        border-bottom-right-radius: 4px;
     }
 
     .sora-message.loading {
@@ -163,17 +233,29 @@
         color: white;
         cursor: pointer;
         font-size: 14px;
+        transition: 0.25s ease;
+    }
+
+    #sora-chat-form button:hover {
+        background: #4e443a;
     }
 
     @media (max-width: 600px) {
         #sora-chat-panel {
             width: 100vw;
+            max-width: 100vw;
             right: -100vw;
         }
 
-        #sora-chat-toggle {
+        .sora-chat-toggle {
             right: 18px;
             bottom: 18px;
+            width: 60px;
+            height: 60px;
+        }
+
+        .sora-chat-icon {
+            font-size: 18px;
         }
     }
 </style>
@@ -187,6 +269,10 @@
         const input = document.getElementById('sora-chat-input');
         const messages = document.getElementById('sora-chat-messages');
 
+        if (!panel || !toggle || !closeBtn || !form || !input || !messages) {
+            return;
+        }
+
         toggle.addEventListener('click', function () {
             panel.classList.add('open');
             toggle.style.display = 'none';
@@ -195,7 +281,7 @@
 
         closeBtn.addEventListener('click', function () {
             panel.classList.remove('open');
-            toggle.style.display = 'block';
+            toggle.style.display = 'flex';
         });
 
         form.addEventListener('submit', function (e) {

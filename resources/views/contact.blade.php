@@ -50,7 +50,6 @@
     animation:fadeUp 2s ease;
 }
 
-/* CONTACT */
 
 .contact-section{
     padding:100px 80px;
@@ -140,7 +139,6 @@ textarea.form-control{
     box-shadow:0 10px 20px rgba(0,0,0,.15);
 }
 
-/* TEAM */
 
 .team-section{
     padding:100px 80px;
@@ -194,8 +192,7 @@ textarea.form-control{
     line-height:1.8;
 }
 
-/* FOUNDER */
-
+  /* FOUNDER */
 .founder-section{
     padding:100px 80px;
     background:white;
@@ -262,8 +259,17 @@ textarea.form-control{
 .care-card p{
     line-height:1.8;
 }
+.care-card a {
+    color: white;
+    text-decoration: none;
+    transition: 0.3s ease;
+}
 
-/* ANIMATION */
+.care-card a:hover {
+    color: #f5e7c1;
+    text-decoration: underline;
+}
+
 
 @keyframes fadeUp{
     from{
@@ -308,7 +314,6 @@ textarea.form-control{
 
 @section('content')
 
-<!-- ABOUT -->
 
 <section class="about-section">
 
@@ -446,14 +451,22 @@ textarea.form-control{
     <div class="care-grid">
 
         <div class="care-card">
-            <h3>📧 Email</h3>
-            <p>hello@sorajewelry.com</p>
-        </div>
+    <h3>📧 Email</h3>
+    <p>
+        <a href="mailto:soraajewelry@gmail.com">
+            soraajewelry@gmail.com
+        </a>
+    </p>
+    </div>
 
         <div class="care-card">
             <h3>📱 WhatsApp</h3>
-            <p>+62 812 3456 7890</p>
-        </div>
+            <p>
+        <a href="https://wa.me/628993790220" target="_blank">
+            +62 899 379 0220
+        </a>
+             </p>
+         </div>
 
         <div class="care-card">
             <h3>🚚 Shipping</h3>

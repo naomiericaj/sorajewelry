@@ -111,6 +111,12 @@
         cursor: pointer;
         font-size: 15px;
         width: 100%;
+        transition: 0.25s ease;
+    }
+
+    .btn:hover {
+        background: #111;
+        color: white;
     }
 
     .btn-dark {
@@ -120,6 +126,17 @@
 
     .wishlist-form {
         margin-top: 12px;
+    }
+
+    .ajax-main-btn.added {
+        background: #d7c3a3;
+        border-color: #d7c3a3;
+        color: #4e443a;
+    }
+
+    .ajax-loading {
+        opacity: 0.7;
+        pointer-events: none;
     }
 
     .accordion {
@@ -175,18 +192,18 @@
 
 <section class="product-page">
     <div class="product-gallery">
-    @if($product->images->isNotEmpty())
-        @foreach($product->images as $image)
+        @if($product->images->isNotEmpty())
+            @foreach($product->images as $image)
+                <div class="product-image-box">
+                    <img src="{{ asset('images/' . $image->image_path) }}" alt="{{ $product->name }}">
+                </div>
+            @endforeach
+        @else
             <div class="product-image-box">
-                <img src="{{ asset('images/' . $image->image_path) }}" alt="{{ $product->name }}">
+                <div style="color:#999;">No Image</div>
             </div>
-        @endforeach
-    @else
-        <div class="product-image-box">
-            <div style="color:#999;">No Image</div>
-        </div>
-    @endif
-</div>
+        @endif
+    </div>
 
     <aside class="product-info">
         <h1 class="product-title">{{ $product->name }}</h1>
@@ -201,7 +218,7 @@
 
         <div class="divider"></div>
 
-        <form action="{{ route('cart.store', $product) }}" method="POST">
+        <form action="{{ route('cart.store', $product) }}" method="POST" class="ajax-cart-form">
             @csrf
 
             <label class="field-label">Color</label>
@@ -227,15 +244,18 @@
                     <button type="button" onclick="changeQty(1)">+</button>
                 </div>
 
-                <button type="submit" class="btn">
+                <button type="submit" class="btn ajax-main-btn" data-original-text="🛍 &nbsp; Add to cart">
                     🛍 &nbsp; Add to cart
                 </button>
             </div>
         </form>
 
-        <form action="{{ route('wishlist.store', $product) }}" method="POST" class="wishlist-form">
+        <form action="{{ route('wishlist.store', $product) }}" method="POST" class="wishlist-form ajax-wishlist-form">
             @csrf
-            <button type="submit" class="btn">♡ Add to wishlist</button>
+
+            <button type="submit" class="btn ajax-main-btn" data-original-text="♡ Add to wishlist">
+                ♡ Add to wishlist
+            </button>
         </form>
 
         <div class="accordion" style="margin-top: 28px;">

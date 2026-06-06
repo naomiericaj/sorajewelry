@@ -216,7 +216,26 @@
                 Standard shipping will be calculated at checkout.
             </div>
 
+            <h2 class="section-title">Discount Code</h2>
+
+            <input  
+                class="input"
+                 type="text"
+                name="discount_code"
+                 placeholder="Enter your voucher code">
+                 @error('discount_code')
+    <p style="
+        color:#dc2626;
+        margin-top:-8px;
+        margin-bottom:15px;
+        font-size:14px;
+    ">
+        {{ $message }}
+    </p>
+@enderror
+
             <h2 class="section-title">Payment</h2>
+
             <p class="payment-note">
                 After placing your order, you will be redirected to Midtrans payment. Choose QRIS or GoPay to show the QR payment simulation.
             </p>
