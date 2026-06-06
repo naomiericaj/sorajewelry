@@ -7,15 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Event extends Model
 {
     protected $fillable = [
-        'title',
-        'email_subject',
-        'description',
-        'discount_code',
-        'start_date',
-        'end_date',
-        'is_active',
-        'email_sent',
-    ];
+    'title',
+    'email_subject',
+    'description',
+    'discount_code',
+    'discount_percentage',
+    'start_date',
+    'end_date',
+    'is_active',
+    'email_sent',
+];
 
     protected $casts = [
         'start_date' => 'datetime',

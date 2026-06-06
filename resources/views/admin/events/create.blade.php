@@ -47,6 +47,17 @@
     </div>
 
     <div style="margin-bottom:20px;">
+    <label>Discount Percentage (%)</label>
+
+    <input
+        type="number"
+        name="discount_percentage"
+        min="1"
+        max="100"
+        style="width:100%;padding:10px;">
+</div>
+
+    <div style="margin-bottom:20px;">
         <label>Start Date</label>
         <input type="datetime-local"
                name="start_date"

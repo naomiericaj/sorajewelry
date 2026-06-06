@@ -9,7 +9,7 @@
     }
 
     .catalogue-header {
-        margin-bottom: 36px;
+        margin-bottom: 15px;
     }
 
     .catalogue-title {
@@ -21,25 +21,14 @@
 
     .catalogue-subtitle {
         color: #666;
-        margin-top: 8px;
-        font-size: 15px;
+        margin-top: 12px;
+        font-size: 18px;
     }
 
     .product-count {
-        margin-top: 18px;
+        margin-top: 5px;
         color: #777;
-        font-size: 14px;
-    }
-
-    .search-result-text {
-        margin-top: 12px;
-        color: #666;
-        font-size: 14px;
-    }
-
-    .search-result-text a {
-        margin-left: 10px;
-        text-decoration: underline;
+        font-size: 17px;
     }
 
     .product-grid {
@@ -53,13 +42,7 @@
         color: inherit;
         text-decoration: none;
         position: relative;
-    }
-
-    .product-card-link,
-    .product-image-link {
-        display: block;
-        color: inherit;
-        text-decoration: none;
+        z-index: 1;
     }
 
     .product-image-wrap {
@@ -75,11 +58,6 @@
         height: 100%;
         object-fit: cover;
         display: block;
-        transition: transform 0.6s ease;
-    }
-
-    .product-card:hover .product-image-wrap img {
-        transform: scale(1.08);
     }
 
     .no-image-box {
@@ -97,60 +75,21 @@
         position: absolute;
         top: 14px;
         left: 14px;
-        background: rgba(255, 255, 255, 0.9);
+
+        background: rgba(255,255,255,0.9);
         backdrop-filter: blur(6px);
+
         color: #4e443a;
+
         font-family: 'Cormorant Garamond', serif;
         font-size: 15px;
         font-weight: 600;
         letter-spacing: 1px;
+
         padding: 6px 14px;
         border-radius: 30px;
+
         z-index: 2;
-    }
-
-    .product-action-icons {
-        position: absolute;
-        right: 14px;
-        bottom: 14px;
-        display: flex;
-        gap: 8px;
-        z-index: 30;
-    }
-
-    .circle-action-btn {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        border: 1px solid rgba(17, 17, 17, 0.16);
-        background: rgba(255, 255, 255, 0.94);
-        color: #111;
-        cursor: pointer;
-        font-size: 17px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(8px);
-        transition: 0.25s ease;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-        padding: 0;
-    }
-
-    .circle-action-btn:hover {
-        background: #111;
-        color: white;
-        transform: translateY(-2px);
-    }
-
-    .circle-action-btn.added {
-        background: #d7c3a3;
-        border-color: #d7c3a3;
-        color: #4e443a;
-    }
-
-    .circle-action-btn.ajax-loading {
-        opacity: 0.7;
-        pointer-events: none;
     }
 
     .product-info {
@@ -195,6 +134,23 @@
         margin-top: 40px;
     }
 
+    .product-image-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+
+        transition: transform 0.6s ease;
+    }
+
+    .product-card:hover .product-image-wrap img {
+        transform: scale(1.08);
+    }
+
+    .product-image-wrap {
+        overflow: hidden;
+    }
+
     @media (max-width: 1100px) {
         .product-grid {
             grid-template-columns: repeat(3, 1fr);
@@ -223,19 +179,279 @@
             text-align: left;
             margin-top: 5px;
         }
+        .catalogue-filters {
+    margin: 28px 0 36px;
+    padding: 18px;
+    background: #ffffff;
+    border: 1px solid #e1e1dd;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+}
 
-        .product-action-icons {
-            right: 10px;
-            bottom: 10px;
-            gap: 6px;
-        }
+.catalogue-filters select,
+.catalogue-filters input {
+    height: 42px;
+    border: 1px solid #d8d8d4;
+    background: transparent;
+    padding: 0 12px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    min-width: 150px;
+}
 
-        .circle-action-btn {
-            width: 36px;
-            height: 36px;
-            font-size: 15px;
-        }
+.filter-btn {
+    height: 42px;
+    border: 1px solid #111;
+    background: #111;
+    color: white;
+    padding: 0 22px;
+    cursor: pointer;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+}
+
+.clear-filter-btn {
+    height: 42px;
+    border: 1px solid #d8d8d4;
+    background: transparent;
+    color: #333;
+    padding: 0 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-result-text {
+    margin-top: 12px;
+    color: #666;
+    font-size: 14px;
+}
+
+.search-result-text a {
+    margin-left: 10px;
+    text-decoration: underline;
+}
+
+.catalogue-filters {
+    margin: 28px 0 36px;
+    padding: 18px 20px;
+    background: #ffffff;
+    border: 1px solid #e1e1dd;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.catalogue-filters input,
+.catalogue-filters select {
+    height: 48px;
+    min-width: 180px;
+
+    padding: 0 18px;
+
+    border: 1px solid #d8d2c8;
+    border-radius: 999px;
+
+    background: #fff;
+
+    color: #4e443a;
+
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+
+    outline: none;
+
+    transition: all 0.3s ease;
+}
+
+.catalogue-filters input {
+    min-width: 230px;
+}
+
+.catalogue-filters input::placeholder {
+    color: #999;
+}
+
+.catalogue-filters input:focus,
+.catalogue-filters select:focus {
+    border-color: #b89b5e;
+    background: #fff;
+
+        box-shadow: 0 0 0 4px rgba(184, 155, 94, 0.12);
+}
+
+.filter-btn {
+    height: 44px;
+    border: 1px solid #111;
+    background: #111;
+    color: white;
+    padding: 0 24px;
+    cursor: pointer;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    transition: 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: #b89b5e;
+    border-color: #b89b5e;
+}
+
+.clear-filter-btn {
+    height: 44px;
+    border: 1px solid #d8d8d4;
+    background: transparent;
+    color: #333;
+    padding: 0 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    transition: 0.3s ease;
+}
+
+.clear-filter-btn:hover {
+    border-color: #b89b5e;
+    color: #b89b5e;
+}
+
+.search-result-text {
+    margin-top: 12px;
+    color: #666;
+    font-size: 15px;
+}
+
+.search-result-text strong {
+    color: #111;
+}
+
+.search-result-text a {
+    margin-left: 10px;
+    color: #b89b5e;
+    text-decoration: underline;
+}
+@media (max-width: 750px) {
+    .catalogue-page {
+        padding: 30px 18px 60px;
     }
+
+    .catalogue-title {
+        font-size: 34px;
+    }
+
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .product-info {
+        display: block;
+    }
+
+    .product-price {
+        text-align: left;
+        margin-top: 5px;
+    }
+
+    .catalogue-filters {
+        padding: 16px;
+        gap: 10px;
+    }
+
+    .catalogue-filters input,
+    .catalogue-filters select,
+    .filter-btn,
+    .clear-filter-btn {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .clear-filter-btn {
+        justify-content: center;
+    }
+}
+    }
+    
+.catalogue-filters select {
+    height: 40px;
+    min-width: 180px;
+
+    padding: 0 18px;
+
+    border: 1px solid #d8d2c8;
+    border-radius: 999px;
+
+    background: #fff;
+
+    color: #4e443a;
+
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+
+    transition: all 0.3s ease;
+}
+
+.catalogue-filters select:focus {
+    border-color: #b89b5e;
+    box-shadow: 0 0 0 4px rgba(184, 155, 94, 0.12);
+}
+
+.catalogue-filters {
+    margin: 20px 0 20px;
+}
+
+.filter-btn,
+.clear-filter-btn {
+    height: 40px;
+    padding: 0 22px;
+
+    border-radius: 999px;
+    border: 1px solid #d8d2c8;
+
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+    cursor: pointer;
+
+    transition: all 0.3s ease;
+}
+
+.filter-btn {
+    background: #d7c3a3;
+    border-color: #d7c3a3;
+    color: #4e443a;
+    margin-left: 15px;
+}
+
+.filter-btn:hover {
+    background: #ccb089;
+    border-color: #ccb089;
+
+    box-shadow: 0 0 0 4px rgba(184, 155, 94, 0.12);
+}
+
+.clear-filter-btn {
+    background: #fff;
+    color: #4e443a;
+    margin-left: 5px;
+}
+
+.clear-filter-btn:hover {
+    border-color: #b89b5e;
+    color: #b89b5e;
+
+    box-shadow: 0 0 0 4px rgba(184, 155, 94, 0.12);
+}
+
 </style>
 @endsection
 
@@ -253,17 +469,72 @@
                 {{ $products->count() }} items
             @endif
 
-            @if(request('search'))
-                <div class="search-result-text">
-                    Search results for: <strong>{{ request('search') }}</strong>
+            @if(request('search') || request('category') || request('sort') || request('featured') || request('discount'))
+    <div class="search-result-text">
+        Showing filtered results
 
-                    <a href="{{ route('products.index') }}">
-                        Clear
-                    </a>
-                </div>
-            @endif
+        @if(request('search'))
+            for: <strong>{{ request('search') }}</strong>
+        @endif
+
+        <a href="{{ route('products.index') }}">Clear all</a>
+    </div>
+@endif
         </div>
     </div>
+
+    <form action="{{ route('products.index') }}" method="GET" class="catalogue-filters">
+    {{-- <input
+        type="text"
+        name="search"
+        placeholder="Search products..."
+        value="{{ request('search') }}"
+    > --}}
+
+    <select name="category">
+        <option value="">All Categories</option>
+        @foreach($categories as $category)
+            <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                {{ $category->name }}
+            </option>
+        @endforeach
+    </select>
+
+    <select name="sort">
+        <option value="">Newest</option>
+        <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>
+            Price: Low to High
+        </option>
+        <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>
+            Price: High to Low
+        </option>
+        <option value="name" {{ request('sort') == 'name' ? 'selected' : '' }}>
+            Name A-Z
+        </option>
+    </select>
+
+    <select name="featured">
+        <option value="">All Products</option>
+        <option value="1" {{ request('featured') == '1' ? 'selected' : '' }}>
+            Featured Only
+        </option>
+    </select>
+
+    <select name="discount">
+        <option value="">All Prices</option>
+        <option value="1" {{ request('discount') == '1' ? 'selected' : '' }}>
+            Discount Only
+        </option>
+    </select>
+
+    <button type="submit" class="filter-btn">
+        Apply
+    </button>
+
+    <a href="{{ route('products.index') }}" class="clear-filter-btn">
+        Clear
+    </a>
+</form>
 
     @if($products->isEmpty())
         <div class="empty-box">
@@ -277,65 +548,38 @@
                     $price = $product->discount_price ?? $product->price;
                 @endphp
 
-                <div class="product-card">
+                <a href="{{ route('products.show', $product->slug) }}" class="product-card">
                     <div class="product-image-wrap">
-                        <a href="{{ route('products.show', $product->slug) }}" class="product-image-link">
-                            @if($product->is_featured)
-                                <span class="featured-badge">✦ Featured</span>
-                            @endif
+                        @if($product->is_featured)
+                            <span class="featured-badge">✦ Featured</span>
+                        @endif
 
-                            @if($image)
-                                <img src="{{ asset('storage/' . $image->image_path) }}" alt="{{ $product->name }}">
-                            @else
-                                <div class="no-image-box">No Image</div>
-                            @endif
-                        </a>
-
-                        <div class="product-action-icons">
-                            <button
-                                type="button"
-                                class="circle-action-btn ajax-wishlist-btn"
-                                data-url="{{ route('wishlist.store', $product) }}"
-                                data-original-text="♡"
-                                title="Add to wishlist"
-                            >
-                                ♡
-                            </button>
-
-                            <button
-                                type="button"
-                                class="circle-action-btn ajax-cart-btn"
-                                data-url="{{ route('cart.store', $product) }}"
-                                data-original-text="🛍"
-                                title="Add to cart"
-                            >
-                                🛍
-                            </button>
-                        </div>
+                        @if($image)
+                            <img src="{{ asset('storage/' . $image->image_path) }}" alt="{{ $product->name }}">
+                        @else
+                            <div class="no-image-box">No Image</div>
+                        @endif
                     </div>
 
-                    <a href="{{ route('products.show', $product->slug) }}" class="product-card-link">
-                        <div class="product-info">
-                            <div class="product-name">
-                                {{ $product->name }}
-                            </div>
-
-                            <div class="product-price">
-                                @if($product->discount_price)
-                                    <span class="discount-price">
-                                        Rp {{ number_format($product->discount_price, 0, ',', '.') }}
-                                    </span>
-
-                                    <span class="old-price">
-                                        Rp {{ number_format($product->price, 0, ',', '.') }}
-                                    </span>
-                                @else
-                                    Rp {{ number_format($product->price, 0, ',', '.') }}
-                                @endif
-                            </div>
+                    <div class="product-info">
+                        <div class="product-name">
+                            {{ $product->name }}
                         </div>
-                    </a>
-                </div>
+
+                        <div class="product-price">
+                            @if($product->discount_price)
+                                <span class="discount-price">
+                                    Rp {{ number_format($product->discount_price, 0, ',', '.') }}
+                                </span>
+                                <span class="old-price">
+                                    Rp {{ number_format($product->price, 0, ',', '.') }}
+                                </span>
+                            @else
+                                Rp {{ number_format($product->price, 0, ',', '.') }}
+                            @endif
+                        </div>
+                    </div>
+                </a>
             @endforeach
         </div>
 
@@ -346,99 +590,5 @@
         @endif
     @endif
 </section>
-
-<script>
-    document.addEventListener('click', function (event) {
-        const button = event.target.closest('.ajax-cart-btn, .ajax-wishlist-btn');
-
-        if (!button) {
-            return;
-        }
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        const isCart = button.classList.contains('ajax-cart-btn');
-        const isWishlist = button.classList.contains('ajax-wishlist-btn');
-        const originalText = button.dataset.originalText || button.innerHTML;
-        const url = button.dataset.url;
-
-        button.classList.add('ajax-loading');
-
-        const formData = new FormData();
-
-        if (isCart) {
-            formData.append('quantity', '1');
-        }
-
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
-            },
-            body: formData
-        })
-        .then(async response => {
-            if (response.status === 401 || response.status === 419) {
-                window.location.href = "{{ route('login') }}";
-                return null;
-            }
-
-            if (!response.ok) {
-                console.error(await response.text());
-                return null;
-            }
-
-            return await response.json();
-        })
-        .then(data => {
-            button.classList.remove('ajax-loading');
-
-            if (!data || !data.success) {
-                button.innerHTML = '!';
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                }, 1200);
-                return;
-            }
-
-            button.classList.add('added');
-            button.innerHTML = '✓';
-
-            setTimeout(() => {
-                button.classList.remove('added');
-                button.innerHTML = originalText;
-            }, 1400);
-
-            if (isCart && data.cart_count !== undefined) {
-                const cartCount = document.querySelector('.cart-count');
-
-                if (cartCount) {
-                    cartCount.textContent = data.cart_count;
-                }
-            }
-
-            if (isWishlist && data.wishlist_count !== undefined) {
-                const wishlistCount = document.querySelector('.wishlist-count');
-
-                if (wishlistCount) {
-                    wishlistCount.textContent = data.wishlist_count;
-                }
-            }
-        })
-        .catch(error => {
-            button.classList.remove('ajax-loading');
-
-            button.innerHTML = '!';
-            setTimeout(() => {
-                button.innerHTML = originalText;
-            }, 1200);
-
-            console.error(error);
-        });
-    });
-</script>
 
 @endsection

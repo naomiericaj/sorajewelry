@@ -71,35 +71,44 @@ text-align:center;
 
     @if($event->discount_code)
 
-    <div style="
-    margin:35px 0;
-    padding:25px;
-    text-align:center;
-    border:2px dashed #b89b5e;
-    border-radius:15px;
-    background:#fbf8f1;
+<div style="
+margin:35px 0;
+padding:25px;
+text-align:center;
+border:2px dashed #b89b5e;
+border-radius:15px;
+background:#fbf8f1;
+">
+
+    <p style="
+    margin:0;
+    color:#777;
+    font-size:14px;
     ">
+        Exclusive Discount Code
+    </p>
 
-        <p style="
-        margin:0;
-        color:#777;
-        font-size:14px;
-        ">
-            Exclusive Discount Code
-        </p>
+    <h2 style="
+    margin:12px 0 0;
+    color:#b89b5e;
+    letter-spacing:4px;
+    font-size:32px;
+    ">
+        {{ $event->discount_code }}
+    </h2>
 
-        <h2 style="
-        margin:12px 0 0;
-        color:#b89b5e;
-        letter-spacing:4px;
-        font-size:32px;
-        ">
-            {{ $event->discount_code }}
-        </h2>
+    <p style="
+    margin-top:12px;
+    font-size:18px;
+    color:#222;
+    font-weight:600;
+    ">
+        Get {{ $event->discount_percentage }}% OFF
+    </p>
 
-    </div>
+</div>
 
-    @endif
+@endif
 
     <div style="
     text-align:center;

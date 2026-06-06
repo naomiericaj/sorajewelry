@@ -30,6 +30,7 @@ class EventController extends Controller
             'email_subject' => 'required|string|max:255',
             'description' => 'required',
             'discount_code' => 'nullable|string|max:50',
+            'discount_percentage' => 'nullable|integer|min:1|max:100',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
@@ -57,6 +58,7 @@ class EventController extends Controller
             'email_subject' => 'required|string|max:255',
             'description' => 'required',
             'discount_code' => 'nullable|string|max:50',
+            'discount_percentage' => 'nullable|integer|min:1|max:100',
             'start_date' => 'required|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
         ]);
