@@ -215,7 +215,7 @@
 
                     <a href="{{ route('products.show', $product->slug) }}">
                         @if($image)
-                            <img src="{{ asset('storage/' . $image->image_path) }}" class="cart-img" alt="{{ $product->name }}">
+                            <img src="{{ asset('images/' . $image->image_path) }}" class="cart-img" alt="{{ $product->name }}">
                         @else
                             <div class="cart-no-image">No Image</div>
                         @endif

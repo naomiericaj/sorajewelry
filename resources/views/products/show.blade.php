@@ -178,7 +178,7 @@
     @if($product->images->isNotEmpty())
         @foreach($product->images as $image)
             <div class="product-image-box">
-                <img src="{{ asset('storage/' . $image->image_path) }}" alt="{{ $product->name }}">
+                <img src="{{ asset('images/' . $image->image_path) }}" alt="{{ $product->name }}">
             </div>
         @endforeach
     @else

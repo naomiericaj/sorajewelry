@@ -106,7 +106,7 @@
 @endphp
 
 @if($image)
-    <img src="{{ asset('storage/' . $image->image_path) }}" alt="{{ $product->name }}">
+    <img src="{{ asset('images/' . $image->image_path) }}" alt="{{ $product->name }}">
 @else
     <div style="width:80px;height:80px;background:#eee;display:flex;align-items:center;justify-content:center;color:#999;font-size:12px;">
         No Image

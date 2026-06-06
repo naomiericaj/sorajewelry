@@ -238,9 +238,9 @@
             <div class="summary-item">
                 <div class="summary-img-wrap">
                     @if($image)
-                        <img src="{{ asset('storage/' . $image->image_path) }}" class="summary-img" alt="{{ $product->name }}">
+                        <img src="{{ asset('images/' . $image->image_path) }}" class="summary-img" alt="{{ $product->name }}">
                     @else
-                        <img src="{{ asset('storage/products/default-jewelry.jpg') }}" class="summary-img" alt="{{ $product->name }}">
+                        <img src="{{ asset('images/default-jewelry.jpg') }}" class="summary-img" alt="{{ $product->name }}">
                     @endif
                     <span class="summary-qty">{{ $item->quantity }}</span>
                 </div>
