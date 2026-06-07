@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProductSeeder extends Seeder
@@ -240,7 +241,15 @@ class ProductSeeder extends Seeder
             ],
         ];
 
-        foreach ($products as $product) {
+        $availableImages = array_values(Storage::disk('public_images')->files());
+
+        if ($availableImages === []) {
+            throw new \RuntimeException('No product images are available in public/images for seeding.');
+        }
+
+        foreach ($products as $index => $product) {
+            $imagePath = basename($availableImages[$index % count($availableImages)]);
+
             $productId = DB::table('products')->insertGetId([
                 'category_id' => $product['category_id'],
                 'collection_id' => $product['collection_id'],
@@ -262,7 +271,7 @@ class ProductSeeder extends Seeder
 
             DB::table('product_images')->insert([
                 'product_id' => $productId,
-                'image_path' => $product['image'],
+                'image_path' => $imagePath,
                 'processed_image_path' => null,
                 'is_main' => true,
                 'created_at' => now(),

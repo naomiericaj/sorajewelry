@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class ProductImage extends Model
 {
@@ -12,6 +13,15 @@ class ProductImage extends Model
         'processed_image_path',
         'is_main',
     ];
+
+    public function getImageUrlAttribute(): string
+    {
+        if (Str::startsWith($this->image_path, 'products/')) {
+            return asset('storage/' . $this->image_path);
+        }
+
+        return asset('images/' . $this->image_path);
+    }
 
     public function product()
     {

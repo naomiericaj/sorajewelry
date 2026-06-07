@@ -257,7 +257,7 @@
             <div class="summary-item">
                 <div class="summary-img-wrap">
                     @if($image)
-                        <img src="{{ asset('images/' . $image->image_path) }}" class="summary-img" alt="{{ $product->name }}">
+                        <img src="{{ $image->image_url }}" class="summary-img" alt="{{ $product->name }}">
                     @else
                         <img src="{{ asset('images/default-jewelry.jpg') }}" class="summary-img" alt="{{ $product->name }}">
                     @endif

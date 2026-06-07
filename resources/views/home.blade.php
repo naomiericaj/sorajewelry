@@ -297,7 +297,7 @@
 <a href="{{ route('products.show', $product->slug) }}" class="featured-card">
     <div class="featured-image-box">
         @if($image)
-            <img src="{{ asset('images/' . $image->image_path) }}" alt="{{ $product->name }}">
+            <img src="{{ $image->image_url }}" alt="{{ $product->name }}">
         @else
             <div class="featured-no-image">No Image</div>
         @endif

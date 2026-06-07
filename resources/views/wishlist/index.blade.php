@@ -101,7 +101,7 @@
                     <a href="{{ route('products.show', $product->slug) }}">
                         <div class="image-box">
                             @if($image)
-                                <img src="{{ asset('images/' . $image->image_path) }}" alt="{{ $product->name }}">
+                                <img src="{{ $image->image_url }}" alt="{{ $product->name }}">
                             @else
                                 <img src="{{ asset('images/default-jewelry.jpg') }}" alt="{{ $product->name }}">
                             @endif

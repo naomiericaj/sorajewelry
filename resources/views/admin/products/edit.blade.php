@@ -519,7 +519,7 @@
 
                 @if($mainImage)
                     <div class="main-preview">
-                        <img src="{{ asset('images/' . $mainImage->image_path) }}" alt="{{ $product->name }}">
+                        <img src="{{ $mainImage->image_url }}" alt="{{ $product->name }}">
                         <div class="main-preview-label">Currently selected main image</div>
                     </div>
                 @else
@@ -541,7 +541,7 @@
                         @foreach($product->images as $image)
                             <div class="admin-image-card">
                                 <div class="admin-image-preview">
-                                    <img src="{{ asset('images/' . $image->image_path) }}" alt="{{ $product->name }}">
+                                    <img src="{{ $image->image_url }}" alt="{{ $product->name }}">
                                 </div>
 
                                 @if($image->is_main)

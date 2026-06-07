@@ -555,7 +555,7 @@
                         @endif
 
                         @if($image)
-                            <img src="{{ asset('images/' . $image->image_path) }}" alt="{{ $product->name }}">
+                            <img src="{{ $image->image_url }}" alt="{{ $product->name }}">
                         @else
                             <div class="no-image-box">No Image</div>
                         @endif

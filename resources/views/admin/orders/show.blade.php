@@ -205,7 +205,7 @@
 
             <div class="summary-item">
                 @if($image)
-                    <img src="{{ asset('images/' . $image->image_path) }}" class="summary-img">
+                    <img src="{{ $image->image_url }}" class="summary-img">
                 @else
                     <img src="{{ asset('images/default-jewelry.jpg') }}" class="summary-img">
                 @endif

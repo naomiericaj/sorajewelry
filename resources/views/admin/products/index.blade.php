@@ -196,7 +196,7 @@
 
                         @if($image)
                             <img
-                                src="{{ asset('images/' . $image->image_path) }}"
+                                src="{{ $image->image_url }}"
                                 alt="{{ $product->name }}"
                                 class="thumb"
                             >
