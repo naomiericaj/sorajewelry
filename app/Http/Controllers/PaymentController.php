@@ -23,56 +23,103 @@ class PaymentController extends Controller
     }
 
     public function show(Order $order)
-    {
-        if ($order->user_id !== Auth::id()) {
-            abort(403);
-        }
-
-        $order->load(['items.product', 'payment', 'user']);
-
-        if (!$order->payment) {
-            return redirect()
-                ->route('customer.orders.index')
-                ->withErrors([
-                    'payment' => 'Payment record was not found for this order.',
-                ]);
-        }
-
-        if ($order->payment->payment_status === 'success') {
-            return redirect()
-                ->route('customer.orders.index')
-                ->with('success', 'This order has already been paid.');
-        }
-
-        \Midtrans\Config::$serverKey = config('midtrans.server_key');
-        \Midtrans\Config::$isProduction = config('midtrans.is_production');
-        \Midtrans\Config::$isSanitized = config('midtrans.is_sanitized');
-        \Midtrans\Config::$is3ds = config('midtrans.is_3ds');
-
-        $params = [
-            'transaction_details' => [
-                'order_id' => $order->order_number . '-' . time(),
-                'gross_amount' => (int) $order->total_amount,
-            ],
-            'customer_details' => [
-                'first_name' => $order->user->name,
-                'email' => $order->user->email,
-                'phone' => $order->user->phone ?? '',
-            ],
-            'item_details' => $order->items->map(function ($item) {
-                return [
-                    'id' => (string) $item->product_id,
-                    'price' => (int) $item->price,
-                    'quantity' => (int) $item->quantity,
-                    'name' => substr($item->product->name ?? 'Product', 0, 50),
-                ];
-            })->values()->toArray(),
-        ];
-
-        $snapToken = \Midtrans\Snap::getSnapToken($params);
-
-        return view('payment.show', compact('order', 'snapToken'));
+{
+    if (!Auth::check()) {
+        return redirect()->route('login');
     }
+
+    if ((int) $order->user_id !== (int) Auth::id()) {
+        \Log::warning('Payment page forbidden', [
+            'order_id' => $order->id,
+            'order_user_id' => $order->user_id,
+            'auth_id' => Auth::id(),
+        ]);
+
+        abort(403);
+    }
+
+    $order->load(['items.product', 'payment', 'user']);
+
+    if (!$order->payment) {
+        return redirect()
+            ->route('customer.orders.index')
+            ->withErrors([
+                'payment' => 'Payment record was not found for this order.',
+            ]);
+    }
+
+    if ($order->payment->payment_status === 'success') {
+        return redirect()
+            ->route('customer.orders.index')
+            ->with('success', 'This order has already been paid.');
+    }
+
+    $this->setupMidtrans();
+
+    $itemDetails = $order->items->map(function ($item) {
+        return [
+            'id' => (string) $item->product_id,
+            'price' => (int) $item->price,
+            'quantity' => (int) $item->quantity,
+            'name' => substr($item->product->name ?? $item->product_name ?? 'Product', 0, 50),
+        ];
+    })->values()->toArray();
+
+    $grossAmount = (int) $order->total_price;
+
+    $itemTotal = collect($itemDetails)->sum(function ($item) {
+        return $item['price'] * $item['quantity'];
+    });
+
+    if ($grossAmount > $itemTotal) {
+        $itemDetails[] = [
+            'id' => 'shipping',
+            'price' => (int) ($grossAmount - $itemTotal),
+            'quantity' => 1,
+            'name' => 'Shipping Cost',
+        ];
+    }
+
+    if ($grossAmount < $itemTotal) {
+        $itemDetails[] = [
+            'id' => 'discount',
+            'price' => -1 * (int) ($itemTotal - $grossAmount),
+            'quantity' => 1,
+            'name' => 'Discount',
+        ];
+    }
+
+    $params = [
+        'transaction_details' => [
+            'order_id' => $order->order_number,
+            'gross_amount' => $grossAmount,
+        ],
+        'customer_details' => [
+            'first_name' => $order->user->name,
+            'email' => $order->user->email,
+            'phone' => $order->user->phone ?? '',
+        ],
+        'item_details' => $itemDetails,
+    ];
+
+    try {
+        $snapToken = Snap::getSnapToken($params);
+    } catch (\Exception $e) {
+        \Log::error('Midtrans snap token error', [
+            'order_id' => $order->id,
+            'order_number' => $order->order_number,
+            'message' => $e->getMessage(),
+        ]);
+
+        return redirect()
+            ->route('customer.orders.index')
+            ->withErrors([
+                'midtrans' => 'Could not create payment token: ' . $e->getMessage(),
+            ]);
+    }
+
+    return view('payment.show', compact('order', 'snapToken'));
+}
 
     public function notification(Request $request)
     {
@@ -203,81 +250,98 @@ class PaymentController extends Controller
     }
 
     public function finish(Request $request, Order $order)
-    {
-        if ($order->user_id !== Auth::id()) {
-            abort(403);
-        }
+{
+    if ((int) $order->user_id !== (int) Auth::id()) {
+        abort(403);
+    }
 
-        $result = $request->input('result', []);
+    $this->setupMidtrans();
 
-        $transactionStatus = $result['transaction_status'] ?? null;
-        $paymentType = $result['payment_type'] ?? null;
-        $transactionId = $result['transaction_id'] ?? null;
+    $result = $request->input('result', []);
+
+    $transactionStatus = $result['transaction_status'] ?? null;
+    $paymentType = $result['payment_type'] ?? null;
+    $transactionId = $result['transaction_id'] ?? null;
+
+    /*
+     * Sometimes Snap returns "pending" first even after customer completes payment.
+     * So we ask Midtrans directly for the latest transaction status.
+     */
+    try {
+        $midtransStatus = Transaction::status($order->order_number);
+
+        $transactionStatus = $midtransStatus->transaction_status ?? $transactionStatus;
+        $paymentType = $midtransStatus->payment_type ?? $paymentType;
+        $transactionId = $midtransStatus->transaction_id ?? $transactionId;
+
+        $result = json_decode(json_encode($midtransStatus), true);
+    } catch (\Exception $e) {
+        \Log::warning('Could not check Midtrans status after payment finish: ' . $e->getMessage());
+    }
+
+    $messageType = 'pending';
+
+    if ($transactionStatus === 'settlement' || $transactionStatus === 'capture') {
+        $order->update([
+            'order_status' => 'processing',
+        ]);
+
+        $order->payment()->update([
+            'payment_method' => $paymentType,
+            'payment_status' => 'success',
+            'transaction_id' => $transactionId,
+            'payment_response' => $result,
+            'paid_at' => now(),
+        ]);
+
+        $this->sendReceiptEmail($order);
+
+        $messageType = 'success';
+    } elseif ($transactionStatus === 'pending') {
+        $order->payment()->update([
+            'payment_method' => $paymentType,
+            'payment_status' => 'pending',
+            'transaction_id' => $transactionId,
+            'payment_response' => $result,
+        ]);
 
         $messageType = 'pending';
-
-        if ($transactionStatus === 'settlement' || $transactionStatus === 'capture') {
-            $order->update([
-                'order_status' => 'processing',
-            ]);
-
-            $order->payment()->update([
-                'payment_method' => $paymentType,
-                'payment_status' => 'success',
-                'transaction_id' => $transactionId,
-                'payment_response' => $result,
-                'paid_at' => now(),
-            ]);
-
-            // ✅ SEND RECEIPT EMAIL
-            $this->sendReceiptEmail($order);
-
-            $messageType = 'success';
-        } elseif ($transactionStatus === 'pending') {
-            $order->payment()->update([
-                'payment_method' => $paymentType,
-                'payment_status' => 'pending',
-                'transaction_id' => $transactionId,
-                'payment_response' => $result,
-            ]);
-
-            $messageType = 'pending';
-        } elseif (
-            $transactionStatus === 'deny' ||
-            $transactionStatus === 'cancel' ||
-            $transactionStatus === 'failure'
-        ) {
-            $order->payment()->update([
-                'payment_method' => $paymentType,
-                'payment_status' => 'failed',
-                'transaction_id' => $transactionId,
-                'payment_response' => $result,
-            ]);
-
-            $messageType = 'failed';
-        } elseif ($transactionStatus === 'expire') {
-            $order->update([
-                'order_status' => 'cancelled',
-            ]);
-
-            $order->payment()->update([
-                'payment_method' => $paymentType,
-                'payment_status' => 'expired',
-                'transaction_id' => $transactionId,
-                'payment_response' => $result,
-            ]);
-
-            $messageType = 'expired';
-        }
-
-        return response()->json([
-            'success' => true,
-            'redirect_url' => route('customer.orders.index', [
-                'payment' => $messageType,
-                'order' => $order->order_number,
-            ]),
+    } elseif (
+        $transactionStatus === 'deny' ||
+        $transactionStatus === 'cancel' ||
+        $transactionStatus === 'failure'
+    ) {
+        $order->payment()->update([
+            'payment_method' => $paymentType,
+            'payment_status' => 'failed',
+            'transaction_id' => $transactionId,
+            'payment_response' => $result,
         ]);
+
+        $messageType = 'failed';
+    } elseif ($transactionStatus === 'expire') {
+        $order->update([
+            'order_status' => 'cancelled',
+        ]);
+
+        $order->payment()->update([
+            'payment_method' => $paymentType,
+            'payment_status' => 'expired',
+            'transaction_id' => $transactionId,
+            'payment_response' => $result,
+        ]);
+
+        $messageType = 'expired';
     }
+
+    return response()->json([
+        'success' => true,
+        'redirect_url' => route('customer.orders.index', [
+            'payment' => $messageType,
+            'order' => $order->order_number,
+        ]),
+    ]);
+}
 
     /**
      * Send order receipt email to customer

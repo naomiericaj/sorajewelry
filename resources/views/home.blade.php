@@ -265,7 +265,7 @@
     <section class="hero">
 
         <video autoplay muted loop playsinline class="hero-video">
-            <source src="{{ asset('videos/jewelry-video.mp4') }}" type="video/mp4">
+            <source src="https://res.cloudinary.com/dq2ljlqkw/video/upload/v1780752636/jewelry-video_ouejna.mp4" type="video/mp4">
         </video>
 
         <div class="hero-overlay"></div>

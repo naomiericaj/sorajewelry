@@ -20,9 +20,15 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        if ($order->user_id !== Auth::id()) {
-            abort(403);
-        }
+        if ((int) $order->user_id !== (int) Auth::id()) {
+    \Log::warning('Customer order view forbidden', [
+        'order_id' => $order->id,
+        'order_user_id' => $order->user_id,
+        'auth_id' => Auth::id(),
+    ]);
+
+    abort(403);
+}
 
         $order->load(['items.product.images', 'payment']);
 

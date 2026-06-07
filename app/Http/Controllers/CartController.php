@@ -108,14 +108,12 @@ class CartController extends Controller
         ]);
     }
 
-    public function destroy(CartItem $cartItem)
-    {
-        if ($cartItem->cart->user_id !== Auth::id()) {
-            abort(403);
-        }
+ public function destroy(CartItem $cartItem)
+{
+    $cartItem->delete();
 
-        $cartItem->delete();
-
-        return back()->with('success', 'Item removed from cart.');
-    }
+    return redirect()
+        ->route('cart.index')
+        ->with('success', 'Item removed from cart.');
+}
 }

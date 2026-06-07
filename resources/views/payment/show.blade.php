@@ -227,15 +227,30 @@
             </div>
         @endforeach
 
-        <div class="summary-row">
-            <span>Subtotal</span>
-            <span>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
-        </div>
+       <div class="summary-row">
+    <span>Subtotal</span>
+    <span>Rp {{ number_format($order->subtotal, 0, ',', '.') }}</span>
+</div>
 
-        <div class="summary-row">
-            <span>Shipping</span>
-            <span>Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</span>
-        </div>
+@if($order->discount_amount > 0)
+<div class="summary-row">
+    <span>
+        Discount
+        @if($order->voucher_code)
+            ({{ $order->voucher_code }})
+        @endif
+    </span>
+
+    <span>
+        - Rp {{ number_format($order->discount_amount, 0, ',', '.') }}
+    </span>
+</div>
+@endif
+
+<div class="summary-row">
+    <span>Shipping</span>
+    <span>Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</span>
+</div>
 
         <div class="summary-total">
             <span>Total</span>
@@ -248,28 +263,30 @@
     <script src="https://app.sandbox.midtrans.com/snap/snap.js"
         data-client-key="{{ config('midtrans.client_key') }}"></script>
 
-    <script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
         const payButton = document.getElementById('pay-button');
 
-        payButton.onclick = function () {
+        if (!payButton) {
+            return;
+        }
+
+        payButton.addEventListener('click', function () {
             window.snap.pay('{{ $snapToken }}', {
-                onSuccess: function(result) {
+                onSuccess: function (result) {
                     finishPayment(result);
                 },
-                onPending: function(result) {
+                onPending: function (result) {
                     finishPayment(result);
                 },
-                onError: function(result) {
-                    finishPayment({
-                        ...result,
-                        transaction_status: 'failure'
-                    });
+                onError: function (result) {
+                    finishPayment(result);
                 },
-                onClose: function() {
-                    window.location.href = "{{ route('customer.orders.index', ['payment' => 'closed', 'order' => $order->order_number]) }}";
+                onClose: function () {
+                    window.location.href = "{{ route('customer.orders.index') }}";
                 }
             });
-        };
+        });
 
         function finishPayment(result) {
             fetch("{{ route('payment.finish', $order) }}", {
@@ -285,14 +302,19 @@
             })
             .then(response => response.json())
             .then(data => {
-                window.location.href = data.redirect_url;
+                if (data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                } else {
+                    window.location.href = "{{ route('customer.orders.index') }}";
+                }
             })
             .catch(error => {
                 console.error(error);
-                window.location.href = "{{ route('customer.orders.index', ['payment' => 'error', 'order' => $order->order_number]) }}";
+                window.location.href = "{{ route('customer.orders.index') }}";
             });
         }
-    </script>
+    });
+</script>
 @endif
 
 @endsection
