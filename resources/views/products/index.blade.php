@@ -380,12 +380,20 @@
     height: 40px;
     min-width: 180px;
 
-    padding: 0 18px;
+    padding: 0 42px 0 18px;
 
     border: 1px solid #d8d2c8;
     border-radius: 999px;
 
-    background: #fff;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%234e443a' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 22px center;
+    background-size: 12px 8px;
+
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 
     color: #4e443a;
 
@@ -393,6 +401,10 @@
     font-size: 17px;
 
     transition: all 0.3s ease;
+}
+
+.catalogue-filters select::-ms-expand {
+    display: none;
 }
 
 .catalogue-filters select:focus {

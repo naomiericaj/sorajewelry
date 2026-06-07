@@ -41,6 +41,82 @@
             font-weight: 1000;
             letter-spacing: 0.5px;
         }
+        
+        .account-dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.account-dropdown-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #333;
+    padding: 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 1000;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.3s ease;
+}
+
+.account-dropdown-btn:hover {
+    color: #b89b5e;
+    transform: scale(1.08);
+}
+
+.account-dropdown-menu {
+    position: absolute;
+    top: 32px;
+    right: 0;
+    min-width: 180px;
+    background: #fff;
+    border: 1px solid #e4e4df;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.14);
+    padding: 8px 0;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: 0.25s ease;
+    z-index: 100000;
+}
+
+.account-dropdown:hover .account-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.account-dropdown-menu a,
+.account-dropdown-menu button {
+    width: 100%;
+    display: block;
+    padding: 11px 16px;
+    border: none;
+    background: white;
+    color: #111;
+    text-align: left;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.account-dropdown-menu a:hover,
+.account-dropdown-menu button:hover {
+    background: #f8f8f6;
+    color: #b89b5e;
+}
+
+.account-dropdown-menu form {
+    margin: 0;
+}
 
         .search-bar {
             font-family: 'Cormorant Garamond', serif;
@@ -239,20 +315,23 @@
         width: 180px;
         opacity: 1;
     }
-        .cart-count {
-            position: absolute;
-            top: -10px;
-            right: -12px;
-            background: black;
-            color: white;
-            width: 21px;
-            height: 21px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
+        .cart-count,
+.wishlist-count {
+    position: absolute;
+    top: -10px;
+    right: -12px;
+    background: black;
+    color: white;
+    min-width: 21px;
+    height: 21px;
+    padding: 0 5px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    line-height: 1;
+}
 
         .page {
             padding: 24px 38px 60px;
@@ -532,20 +611,44 @@
 
     <div class="nav-right">
         @auth
+    <div class="account-dropdown">
+        <button type="button" class="account-dropdown-btn">
             @if(Auth::user()->role === 'admin')
-                <a href="{{ route('admin.dashboard') }}">Admin</a>
+                Admin
             @else
-                <a href="{{ route('customer.dashboard') }}">Account</a>
+                Account
+            @endif
+            <span>⌄</span>
+        </button>
+
+        <div class="account-dropdown-menu">
+            @if(Auth::user()->role === 'admin')
+                <a href="{{ route('admin.dashboard') }}">
+                    Admin Dashboard
+                </a>
+            @else
+                <a href="{{ route('customer.dashboard') }}">
+                    Profile
+                </a>
+
+                <!--<a href="{{ route('customer.orders.index') }}">-->
+                <!--    My Orders-->
+                <!--</a>-->
             @endif
 
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit" class="nav-button">Logout</button>
+
+                <button type="submit">
+                    Logout
+                </button>
             </form>
-        @else
-            <a href="{{ route('login') }}">Login</a>
-            <a href="{{ route('register') }}">Register</a>
-        @endauth
+        </div>
+    </div>
+@else
+    <a href="{{ route('login') }}">Login</a>
+    <a href="{{ route('register') }}">Register</a>
+@endauth
 
       <form action="{{ route('products.index') }}" method="GET" class="navbar-search">
     <input
@@ -559,15 +662,23 @@
         Search
     </button>
 </form>      
-        @auth
-    <a href="{{ route('wishlist.index') }}" class="icon">♡</a>
+       @auth
+    <a href="{{ route('wishlist.index') }}" class="icon">
+        ♡
+        <span class="wishlist-count">
+            {{ \App\Models\Wishlist::where('user_id', auth()->id())->count() }}
+        </span>
+    </a>
 
     <a href="{{ route('cart.index') }}" class="icon">
         🛍
         <span class="cart-count">{{ $cartCount ?? 0 }}</span>
     </a>
 @else
-    <a href="{{ route('login') }}" class="icon">♡</a>
+    <a href="{{ route('login') }}" class="icon">
+        ♡
+        <span class="wishlist-count">0</span>
+    </a>
 
     <a href="{{ route('login') }}" class="icon">
         🛍
