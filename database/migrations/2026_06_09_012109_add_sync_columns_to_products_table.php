@@ -6,23 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            //
+            $table->uuid('uuid')->nullable()->unique()->after('id');
+            $table->timestamp('sync_updated_at')->nullable();
+            $table->timestamp('sync_deleted_at')->nullable();
+            $table->string('sync_origin')->nullable();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            //
+            $table->dropColumn([
+                'uuid',
+                'sync_updated_at',
+                'sync_deleted_at',
+                'sync_origin',
+            ]);
         });
     }
 };
