@@ -180,6 +180,54 @@ Route::middleware('auth')->group(function () {
         ->name('customer.orders.show');
 });
 
+Route::post('/sync/pull', function (Request $request) {
+    abort_if($request->bearerToken() !== config('sync.token'), 403);
+
+    $table = $request->input('table');
+    $since = $request->input('since');
+
+    abort_if(!in_array($table, config('sync.tables')), 403);
+
+    $rows = DB::table($table)
+        ->when($since, function ($query) use ($since) {
+            $query->where('sync_updated_at', '>', $since);
+        })
+        ->get();
+
+    return response()->json([
+        'success' => true,
+        'rows' => $rows,
+    ]);
+})->name('sync.pull');
+
+Route::post('/sync/push', function (Request $request) {
+    abort_if($request->bearerToken() !== config('sync.token'), 403);
+
+    $table = $request->input('table');
+    $rows = $request->input('rows', []);
+
+    abort_if(!in_array($table, config('sync.tables')), 403);
+
+    foreach ($rows as $row) {
+        $row = (array) $row;
+
+        if (empty($row['uuid'])) {
+            continue;
+        }
+
+        unset($row['id']);
+
+        DB::table($table)->updateOrInsert(
+            ['uuid' => $row['uuid']],
+            $row
+        );
+    }
+
+    return response()->json([
+        'success' => true,
+    ]);
+})->name('sync.push');
+
 Route::post('/ai-chatbot/message', [AiChatbotController::class, 'message'])
     ->name('ai.chatbot.message');
 
