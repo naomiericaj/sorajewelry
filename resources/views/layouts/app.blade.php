@@ -602,7 +602,7 @@
     <a href="{{ route('login') }}">My Orders</a>
 @endauth
 
-    <a href="{{ route('contact') }}">About Us</a>
+    <a href="{{ route('contact') }}">About</a>
 </nav>
 
     <a href="{{ route('home') }}" class="logo">
