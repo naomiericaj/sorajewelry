@@ -18,7 +18,7 @@ use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AiChatbotController;
 use App\Http\Controllers\Admin\EventController;
-
+use App\Http\Controllers\PasswordResetController;
 
 
 Route::middleware('auth')->group(function () {
@@ -115,6 +115,19 @@ Route::get('/register', [AuthController::class, 'showRegister'])
 
 Route::post('/register', [AuthController::class, 'register'])
     ->name('register.submit');
+
+// FORGOT / RESET PASSWORD
+Route::get('/forgot-password', [PasswordResetController::class, 'showForgotForm'])
+    ->name('password.request');
+
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'])
+    ->name('password.email');
+
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])
+    ->name('password.reset');
+
+Route::post('/reset-password', [PasswordResetController::class, 'resetPassword'])
+    ->name('password.update');
 
 // ADMIN LOGIN
 Route::get('/admin/login', [AuthController::class, 'showAdminLogin'])

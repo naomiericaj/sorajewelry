@@ -107,6 +107,11 @@
         <input type="password" name="password" required>
 
         <button type="submit" class="btn">Login</button>
+        <div style="text-align: right; margin-top: 8px;">
+    <a href="{{ route('password.request') }}" style="font-size: 14px; color: #8a6f3d;">
+        Forgot Password?
+    </a>
+</div>
     </form>
 
     <a href="{{ route('google.redirect') }}" class="google-btn">
